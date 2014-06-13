@@ -45,7 +45,7 @@ public class Thirst implements EntryPoint {
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
 	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
-	  private Anchor facebookSignInLink = new Anchor("Sign In with Facebook");
+//	  private Anchor facebookSignInLink = new Anchor("Sign In with Facebook");
 //	  private String facebookRedirect = 
 //			  "https://www.facebook.com/dialog/oauth?client_id=559102767531636&redirect_uri=http://1-dot-symmetric-card-607.appspot.com";
 
@@ -83,9 +83,9 @@ public class Thirst implements EntryPoint {
 		
 		// facebook login panel
 //		facebookSignInLink.setHref(facebookRedirect);
-//		facebookLoginPanel.add(facebookLoginLabel);
+		facebookLoginPanel.add(facebookLoginLabel);
 //		facebookLoginPanel.add(facebookSignInLink);
-//		RootPanel.get("thirstList").add(facebookLoginPanel);
+		RootPanel.get("thirstList").add(facebookLoginPanel);
 	}
 	
 	// the page that appears after the user has logged in.  
@@ -99,9 +99,6 @@ public class Thirst implements EntryPoint {
 		mainPanel.add(signOutLink);
 		welcomePanel.add(welcomeLabel);
 		mainPanel.add(welcomePanel);
-		
-		// user specific greeting for facebook login
-		
 	}
 	
 	private void handleError(Throwable error) {
