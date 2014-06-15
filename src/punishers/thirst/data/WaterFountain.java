@@ -1,9 +1,13 @@
 package punishers.thirst.data;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+
 import com.google.appengine.api.users.User;
 
 @PersistenceCapable
@@ -25,7 +29,7 @@ public class WaterFountain {
 	private int id;
 	
 	@Persistent
-	private User user;
+	private Set<User> users;
 	
 	/*
 	 * Constructor for the Water Fountain for all of its information
@@ -37,6 +41,7 @@ public class WaterFountain {
 		this.lon = lon;
 		this.location = location;
 		this.maintainer = maintainer;
+		this.users = new HashSet<User>();
 	}
 	
 	/*
@@ -44,6 +49,27 @@ public class WaterFountain {
 	 */
 	public void setId() {
 		this.id = hashCode();
+	}
+	
+	/*
+	 * Adds a user to the set of users associated with the water fountain
+	 */
+	public void addUser(User u) {
+		users.add(u);
+	}
+	
+	/*
+	 * Gets a user from the set of users
+	 */
+	public User getUser(User u) {
+		User result = null;
+		for (User user : users) {
+			if (user.equals(u)) {
+				result = user;
+				break;
+			}
+		}
+		return result;
 	}
 	
 	/*
