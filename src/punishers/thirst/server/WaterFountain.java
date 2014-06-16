@@ -1,4 +1,4 @@
-package punishers.thirst.data;
+package punishers.thirst.server;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package punishers.thirst.data;
+package punishers.thirst.server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
