@@ -4,10 +4,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 public interface WaterFountainService extends RemoteService {
 	
-	public void addWaterFountain(int id) throws NotLoggedInException;
+	public void addWaterFountainToFavs(int id) throws NotLoggedInException;
 	
-	public void removeWaterFountain(int id) throws NotLoggedInException;
+	public void removeWaterFountainFromFavs(int id) throws NotLoggedInException;
 	
-	public String[] getWaterFountains() throws NotLoggedInException;
+	public String[] getFavWaterFountains() throws NotLoggedInException;
 	
 }
