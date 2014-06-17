@@ -30,6 +30,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
+			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
 			wf.addUser(getUser());
 		} finally {
 			pm.close();
@@ -40,6 +41,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
+			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
 			Query q = pm.newQuery(WaterFountain.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			Set<User> users = wf.getUsers();
@@ -52,25 +54,22 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 	}
-	
-	public WaterFountain getWaterFountain(int id) throws NotLoggedInException {
-		checkLoggedIn();
-		PersistenceManager pm = getPersistenceManager();
-		try {
-			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
-			return wf;
-		} finally {
-			pm.close();
-		}
-		
-	}
 
 	public String[] getFavWaterFountains() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			// todo
-			return null;
+			Query q = pm.newQuery(WaterFountain.class, "users.contnains(getUser())");
+			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
+			String[] resultingArray = new String[waterFountains.size()];
+			for (WaterFountain wf : waterFountains) {
+				int i = 0;
+				String result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + 
+						", " + String.valueOf(wf.getLongitude()) + ", " + String.valueOf(wf.getId());	
+				resultingArray[i] = result;
+				i++;
+			}
+			return resultingArray;
 		} finally {
 			pm.close();
 		}

@@ -14,6 +14,4 @@ public interface WaterFountainServiceAsync {
 	
 	public void getFavWaterFountains(AsyncCallback<String[]> async);
 
-	public void getWaterFountain(int id, AsyncCallback<WaterFountain> async);
-
 }
