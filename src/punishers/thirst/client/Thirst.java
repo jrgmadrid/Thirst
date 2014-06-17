@@ -1,5 +1,7 @@
 package punishers.thirst.client;
 
+import java.util.ArrayList;
+
 import punishers.thirst.shared.FieldVerifier;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -20,6 +22,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -41,6 +44,12 @@ public class Thirst implements EntryPoint {
 	  private Label loginLabel = new Label("Sign in with a Google Account to quench your Thirst.");
 	  private Anchor signInLink = new Anchor("Sign In with Google");
 	  private Anchor signOutLink = new Anchor("Sign Out");
+	  private FlexTable waterFountainFlexTable = new FlexTable();
+      private HorizontalPanel addPanel = new HorizontalPanel();  
+      private TextBox newIdTextBox = new TextBox();  
+      private Button addWaterFountainButton = new Button("Add");
+      
+      private ArrayList<String> waterFountains = new ArrayList<String>();
 	  
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
