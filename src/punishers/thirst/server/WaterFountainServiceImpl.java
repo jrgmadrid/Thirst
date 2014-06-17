@@ -26,7 +26,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	private static final Logger LOG = Logger.getLogger(WaterFountainServiceImpl.class.getName());
 	
 	
-	public void addWaterFountainToFavs(WaterFountain wf) throws NotLoggedInException {
+	public void addWaterFountainToFavs(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -36,7 +36,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 
-	public void removeWaterFountainFromFavs(WaterFountain wf) throws NotLoggedInException {
+	public void removeWaterFountainFromFavs(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -53,7 +53,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
-	@Override
 	public WaterFountain getWaterFountain(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
