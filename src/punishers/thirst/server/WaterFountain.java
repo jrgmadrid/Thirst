@@ -58,8 +58,9 @@ public class WaterFountain {
 		users.add(u);
 	}
 	
+	
 	/*
-	 * Gets a user from the set of users
+	 * Gets the set of users
 	 */
 	public Set<User> getUsers() {
 		return this.users;
