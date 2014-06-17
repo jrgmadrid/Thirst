@@ -63,11 +63,13 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
 			String[] resultingArray = new String[waterFountains.size()];
 			for (WaterFountain wf : waterFountains) {
-				String result = "";
-				result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + ", " + String.valueOf(wf.getLongitude());
-				
+				int i = 0;
+				String result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + 
+						", " + String.valueOf(wf.getLongitude()) + ", " + String.valueOf(wf.getId());	
+				resultingArray[i] = result;
+				i++;
 			}
-			return null;
+			return resultingArray;
 		} finally {
 			pm.close();
 		}
