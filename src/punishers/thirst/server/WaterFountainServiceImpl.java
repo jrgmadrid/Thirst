@@ -40,7 +40,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			// this Query may not work, reassess later
 			Query q = pm.newQuery(WaterFountain.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			Set<User> users = wf.getUsers();
