@@ -67,15 +67,12 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		
 	}
 
-	public Set<WaterFountain> getFavWaterFountains() throws NotLoggedInException {
+	public String[] getFavWaterFountains() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			//Not sure if this method of querying those water fountains that have the current
-			//user in the set of users assigned to the water fountain will work
-			Query q = pm.newQuery(WaterFountain.class, "users.contains(getUser())");
-			Set<WaterFountain> favWaterFountains = (HashSet<WaterFountain>) q.execute();
-			return favWaterFountains;
+			// todo
+			return null;
 		} finally {
 			pm.close();
 		}

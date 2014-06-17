@@ -26,6 +26,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 
 /**
@@ -41,6 +44,8 @@ public class Thirst implements EntryPoint {
 	  
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
+	  
+	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
@@ -82,9 +87,7 @@ public class Thirst implements EntryPoint {
 		RootPanel.get("thirstList").add(loginPanel);
 		
 		// facebook login panel
-//		facebookSignInLink.setHref(facebookRedirect);
 		facebookLoginPanel.add(facebookLoginLabel);
-//		facebookLoginPanel.add(facebookSignInLink);
 		RootPanel.get("thirstList").add(facebookLoginPanel);
 	}
 	
@@ -92,13 +95,44 @@ public class Thirst implements EntryPoint {
 	// add a facebook signout link
 	private void loadThirst() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		RootPanel.get("thirstList").add(mainPanel);
+		RootPanel.get("logged_in").add(welcomePanel);
 		
 		// user specific greeting for google login
 		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
-		mainPanel.add(signOutLink);
+		welcomePanel.add(signOutLink);
 		welcomePanel.add(welcomeLabel);
-		mainPanel.add(welcomePanel);
+		
+		loadWaterFountains();
+	}
+	
+	private void loadWaterFountains() {
+		// likely going to change the return type of getFavWaterFountains
+		waterFountainService.getFavWaterFountains(new AsyncCallback<String[]>() {
+			public void onFailure(Throwable error) {
+			}
+			public void onSuccess(String[] symbols) {
+				displayFountains(symbols);
+			}
+		});
+	}
+	
+	private void displayFountains(String [] symbols) {
+		for (String symbol : symbols) {
+			diplayFountain(symbol);
+		}
+	}
+	
+	private void diplayFountain(String symbol) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	// add a user to a waterfountain's list of users.
+	// executed when a user clicks the favorite button on 
+	// a waterfountain's map pop-up
+	// discuss with Avery
+	private void addWaterFountain() {
+		
 	}
 	
 	private void handleError(Throwable error) {

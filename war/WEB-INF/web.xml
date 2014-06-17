@@ -10,10 +10,20 @@
     <servlet-name>loginService</servlet-name>
     <servlet-class>punishers.thirst.server.LoginServiceImpl</servlet-class>
   </servlet>
+  
+   <servlet>
+    <servlet-name>waterFountainService</servlet-name>
+    <servlet-class>punishers.thirst.server.WaterFountainServiceImpl</servlet-class>
+  </servlet>
 
   <servlet-mapping>
     <servlet-name>loginService</servlet-name>
     <url-pattern>/thirst/login</url-pattern>
+  </servlet-mapping>
+  
+    <servlet-mapping>
+    <servlet-name>waterFountainService</servlet-name>
+    <url-pattern>/thirst/waterfountain</url-pattern>
   </servlet-mapping>
   
   <!-- Default page to serve -->
