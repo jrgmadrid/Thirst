@@ -1,6 +1,7 @@
 package punishers.thirst.server;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -39,6 +40,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
+			// this Query may not work, reassess later
 			Query q = pm.newQuery(WaterFountain.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			Set<User> users = wf.getUsers();
@@ -51,12 +53,32 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 	}
-
-	// not really sure how this is going to work
-	public String[] getFavWaterFountains() throws NotLoggedInException {
+	
+	@Override
+	public WaterFountain getWaterFountain(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		return null;
+		try {
+			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
+			return wf;
+		} finally {
+			pm.close();
+		}
+		
+	}
+
+	public Set<WaterFountain> getFavWaterFountains() throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			//Not sure if this method of querying those water fountains that have the current
+			//user in the set of users assigned to the water fountain will work
+			Query q = pm.newQuery(WaterFountain.class, "users.contains(getUser())");
+			Set<WaterFountain> favWaterFountains = (HashSet<WaterFountain>) q.execute();
+			return favWaterFountains;
+		} finally {
+			pm.close();
+		}
 	}
 	
 	private void checkLoggedIn() throws NotLoggedInException {
@@ -73,4 +95,5 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	private PersistenceManager getPersistenceManager() {
 	  return PMF.getPersistenceManager();
 	}
+
 }

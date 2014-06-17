@@ -26,7 +26,7 @@ public class WaterFountain {
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private int id;
+	private long id;
 	
 	@Persistent
 	private Set<User> users;
@@ -48,7 +48,7 @@ public class WaterFountain {
 	 * Sets the Id of the water fountain (done during the parsing process
 	 */
 	public void setId() {
-		this.id = hashCode();
+		this.id = Long.valueOf(hashCode());
 	}
 	
 	/*
@@ -69,7 +69,7 @@ public class WaterFountain {
 	/*
 	 * Gets the id value for the water fountain
 	 */
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 	
