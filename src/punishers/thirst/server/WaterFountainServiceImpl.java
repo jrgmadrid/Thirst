@@ -1,8 +1,15 @@
 package punishers.thirst.server;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -15,27 +22,40 @@ import punishers.thirst.client.WaterFountainService;
 public class WaterFountainServiceImpl extends RemoteServiceServlet implements WaterFountainService {
 	
 	private static final PersistenceManagerFactory PMF = JDOHelper.getPersistenceManagerFactory("transactions-optional");
-
-	@Override
-	public void addWaterFountainToFavs(int id) throws NotLoggedInException {
+	private static final Logger LOG = Logger.getLogger(WaterFountainServiceImpl.class.getName());
+	
+	
+	public void addWaterFountainToFavs(WaterFountain wf) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			//todo
+			wf.addUser(getUser());
 		} finally {
 			pm.close();
 		}
 	}
 
-	@Override
-	public void removeWaterFountainFromFavs(int id) throws NotLoggedInException {
-		// TODO Auto-generated method stub
-		
+	public void removeWaterFountainFromFavs(WaterFountain wf) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class, "user == u");
+			q.declareParameters("com.google.appengine.api.users.User u");
+			Set<User> users = wf.getUsers();
+			for(User user : users) {
+				if(user.equals(getUser())){
+					users.remove(getUser());
+				}
+			}
+		} finally {
+			pm.close();
+		}
 	}
 
-	@Override
+	// not really sure how this is going to work
 	public String[] getFavWaterFountains() throws NotLoggedInException {
-		// TODO Auto-generated method stub
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
 		return null;
 	}
 	
