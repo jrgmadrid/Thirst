@@ -26,21 +26,22 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	private static final Logger LOG = Logger.getLogger(WaterFountainServiceImpl.class.getName());
 	
 	
-	public void addWaterFountainToFavs(WaterFountain wf) throws NotLoggedInException {
+	public void addWaterFountainToFavs(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
+			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
 			wf.addUser(getUser());
 		} finally {
 			pm.close();
 		}
 	}
 
-	public void removeWaterFountainFromFavs(WaterFountain wf) throws NotLoggedInException {
+	public void removeWaterFountainFromFavs(int id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			// this Query may not work, reassess later
+			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
 			Query q = pm.newQuery(WaterFountain.class, "user == u");
 			q.declareParameters("com.google.appengine.api.users.User u");
 			Set<User> users = wf.getUsers();
@@ -53,25 +54,19 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 	}
-	
-	@Override
-	public WaterFountain getWaterFountain(int id) throws NotLoggedInException {
-		checkLoggedIn();
-		PersistenceManager pm = getPersistenceManager();
-		try {
-			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
-			return wf;
-		} finally {
-			pm.close();
-		}
-		
-	}
 
 	public String[] getFavWaterFountains() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			// todo
+			Query q = pm.newQuery(WaterFountain.class, "users.contnains(getUser())");
+			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
+			String[] resultingArray = new String[waterFountains.size()];
+			for (WaterFountain wf : waterFountains) {
+				String result = "";
+				result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + ", " + String.valueOf(wf.getLongitude());
+				
+			}
 			return null;
 		} finally {
 			pm.close();
