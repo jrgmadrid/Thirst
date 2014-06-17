@@ -62,8 +62,8 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			Query q = pm.newQuery(WaterFountain.class, "users.contnains(getUser())");
 			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
 			String[] resultingArray = new String[waterFountains.size()];
+			int i = 0;
 			for (WaterFountain wf : waterFountains) {
-				int i = 0;
 				String result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + 
 						", " + String.valueOf(wf.getLongitude()) + ", " + String.valueOf(wf.getId());	
 				resultingArray[i] = result;
