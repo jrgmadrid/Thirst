@@ -3,8 +3,6 @@ package punishers.thirst.client;
 import java.util.ArrayList;
 import java.util.Set;
 
-import punishers.thirst.server.CSVReader;
-import punishers.thirst.server.WaterFountain;
 import punishers.thirst.shared.FieldVerifier;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -53,7 +51,7 @@ public class Thirst implements EntryPoint {
       private HorizontalPanel addPanel = new HorizontalPanel();  
       private TextBox newIdTextBox = new TextBox();  
       private Button addWaterFountainButton = new Button("Add");
-      
+      private Button updateDatabaseButton = new Button("Update Database");
       private ArrayList<String> waterFountains = new ArrayList<String>();
 	  
 	  // loadThirst() related junk that will eventually be replaced
@@ -61,15 +59,12 @@ public class Thirst implements EntryPoint {
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
-	  
-	  
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
 	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
 
 	  private HorizontalPanel welcomePanel = new HorizontalPanel();
 	  private Label welcomeLabel;
-	  private Button updateDatabaseButton = new Button("Update Database");
 	  
 	/**
 	 * This is the entry point method.
@@ -123,48 +118,47 @@ public class Thirst implements EntryPoint {
 		addPanel.addStyleName("addPanel");
 		
 		mainPanel.add(welcomeLabel);
-		mainPanel.add(waterFountainFlexTable);
-		mainPanel.add(addPanel);
-		mainPanel.add(signOutLink);
-		welcomePanel.add(welcomeLabel);
-		mainPanel.add(welcomePanel);
-		if (loginInfo.getIsAdmin())
+		
+		if (!loginInfo.getIsAdmin())
+		{
+			mainPanel.add(waterFountainFlexTable);
+			mainPanel.add(addPanel);
+			mainPanel.add(signOutLink);
+			
+			RootPanel.get("logged_in").add(mainPanel);
+			
+			newIdTextBox.setFocus(true);
+			
+		    addWaterFountainButton.addClickHandler(new ClickHandler() {
+		    	public void onClick(ClickEvent event) {
+		    		addWaterFountain();
+		    	}
+		    });
+		    
+		    newIdTextBox.addKeyDownHandler(new KeyDownHandler() {
+		    	public void onKeyDown(KeyDownEvent event) {
+		    		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+		    			addWaterFountain();
+		    		}
+		        }
+		    });
+		}
+		else
 		{
 			mainPanel.add(updateDatabaseButton);
 			updateDatabaseButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					csvReaderService.updateData(new AsyncCallback<Void>() {
-						    public void onFailure(Throwable error) { handleError(error); }
-
-							@Override
-							public void onSuccess(Void result) {
-								// TODO Auto-generated method stub
-								
-							}
-						    });
+					updateDatabase();
 				}
-					
-				});
+			});
 		}
-
-		
-		RootPanel.get("logged_in").add(mainPanel);
-		
-		newIdTextBox.setFocus(true);
-		
-	    addWaterFountainButton.addClickHandler(new ClickHandler() {
-	    	public void onClick(ClickEvent event) {
-	    		addWaterFountain();
-	    	}
-	    });
-	    
-	    newIdTextBox.addKeyDownHandler(new KeyDownHandler() {
-	    	public void onKeyDown(KeyDownEvent event) {
-	    		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-	    			addWaterFountain();
-	    		}
-	        }
-	    });
+	}
+	
+	private void updateDatabase() {
+		csvReaderService.updateData(new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {}
+			public void onSuccess(Void result) {}
+		});
 	}
 	
 	private void loadWaterFountains() {

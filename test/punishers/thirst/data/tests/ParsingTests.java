@@ -5,18 +5,18 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import punishers.thirst.server.CSVReader;
+import punishers.thirst.server.CSVReaderServiceImpl;
 
 public class ParsingTests {
 	
 	@Before
 	public void setUp() {
-		CSVReader.updateData();
+		CSVReaderServiceImpl.updateData();
 	}
 
 	@Test
 	public void parsedDataTest() {
-		assertEquals(233, CSVReader.getWaterFountains().size());
+		assertEquals(233, CSVReaderServiceImpl.getWaterFountains().size());
 	}
 
 }
