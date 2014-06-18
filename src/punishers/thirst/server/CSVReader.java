@@ -47,7 +47,6 @@ public class CSVReader {
 			InputStreamReader inStream = new InputStreamReader(urlConnect.getInputStream());
 			//adjusts the reading of the file
 			BufferedReader csvFile = new BufferedReader(inStream);
-			
 			//Set up the string in which each line will be read into
 			String line = "";
 			//Set up the variable at which point the string is split
