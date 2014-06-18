@@ -10,6 +10,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 
@@ -60,11 +62,7 @@ public class Thirst implements EntryPoint {
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
 	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
-//	  private Anchor facebookSignInLink = new Anchor("Sign In with Facebook");
-//	  private String facebookRedirect = 
-//			  "https://www.facebook.com/dialog/oauth?client_id=559102767531636&redirect_uri=http://1-dot-symmetric-card-607.appspot.com";
 
-	  // user specific greeting
 	  private HorizontalPanel welcomePanel = new HorizontalPanel();
 	  private Label welcomeLabel;
 	  
@@ -104,15 +102,43 @@ public class Thirst implements EntryPoint {
 	// the page that appears after the user has logged in.  
 	// add a facebook signout link
 	private void loadThirst() {
-		signOutLink.setHref(loginInfo.getLogoutUrl());
-		RootPanel.get("logged_in").add(welcomePanel);
 		
-		// user specific greeting for google login
+		signOutLink.setHref(loginInfo.getLogoutUrl());
 		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
-		welcomePanel.add(signOutLink);
-		welcomePanel.add(welcomeLabel);
+		
+		waterFountainFlexTable.setText(0, 0, "Location info");
+		
+		waterFountainFlexTable.getRowFormatter().addStyleName(0, "favoritesListHeader");
+		waterFountainFlexTable.addStyleName("favoritesList");
 		
 		loadWaterFountains();
+		
+		addPanel.add(newIdTextBox);
+		addPanel.add(addWaterFountainButton);
+		addPanel.addStyleName("addPanel");
+		
+		mainPanel.add(welcomeLabel);
+		mainPanel.add(waterFountainFlexTable);
+		mainPanel.add(addPanel);
+		mainPanel.add(signOutLink);
+		
+		RootPanel.get("logged_in").add(mainPanel);
+		
+		newIdTextBox.setFocus(true);
+		
+	    addWaterFountainButton.addClickHandler(new ClickHandler() {
+	    	public void onClick(ClickEvent event) {
+	    		addWaterFountain();
+	    	}
+	    });
+	    
+	    newIdTextBox.addKeyDownHandler(new KeyDownHandler() {
+	    	public void onKeyDown(KeyDownEvent event) {
+	    		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+	    			addWaterFountain();
+	    		}
+	        }
+	    });
 	}
 	
 	private void loadWaterFountains() {
@@ -132,9 +158,40 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
-	private void displayFountain(String symbol) {
-		// TODO Auto-generated method stub
-		
+	private void displayFountain(final String symbol) {
+		int row = waterFountainFlexTable.getRowCount();
+		waterFountains.add(symbol);
+		waterFountainFlexTable.setText(row, 0, symbol);
+		waterFountainFlexTable.setWidget(row, 2, new Label());
+			
+		waterFountainFlexTable.getCellFormatter();
+			
+		Button removeWaterFountainButton = new Button("x");
+		removeWaterFountainButton.addStyleDependentName("remove");
+			
+		removeWaterFountainButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				removeWaterFountain(symbol);
+			}
+		});
+	}
+	
+	private void removeWaterFountain(final String symbol) {
+		int id = Integer.valueOf(symbol);
+		waterFountainService.removeWaterFountainFromFavs(id, new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Void ignore) {
+				undisplayWaterFountain(symbol);
+			}
+		});
+	}
+	
+	private void undisplayWaterFountain(String symbol) {
+		int removedIndex = waterFountains.indexOf(symbol);
+		waterFountains.remove(removedIndex);
+		waterFountainFlexTable.removeRow(removedIndex+1);
 	}
 	
 	// add a user to a waterfountain's list of users.
