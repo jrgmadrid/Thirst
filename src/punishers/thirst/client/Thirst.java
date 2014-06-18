@@ -1,8 +1,10 @@
 package punishers.thirst.client;
 
-import punishers.thirst.server.CSVReader;
 import java.util.ArrayList;
 import java.util.Set;
+
+import punishers.thirst.server.CSVReader;
+import punishers.thirst.server.WaterFountain;
 import punishers.thirst.shared.FieldVerifier;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -58,6 +60,8 @@ public class Thirst implements EntryPoint {
 	  private VerticalPanel mainPanel = new VerticalPanel();
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
+	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
+	  
 	  
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
@@ -129,9 +133,18 @@ public class Thirst implements EntryPoint {
 			mainPanel.add(updateDatabaseButton);
 			updateDatabaseButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					CSVReader.updateData();
+					csvReaderService.updateData(new AsyncCallback<Void>() {
+						    public void onFailure(Throwable error) { handleError(error); }
+
+							@Override
+							public void onSuccess(Void result) {
+								// TODO Auto-generated method stub
+								
+							}
+						    });
 				}
-			});
+					
+				});
 		}
 
 		
