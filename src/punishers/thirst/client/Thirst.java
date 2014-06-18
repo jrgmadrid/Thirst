@@ -52,6 +52,7 @@ public class Thirst implements EntryPoint {
 	  // user specific greeting
 	  private HorizontalPanel welcomePanel = new HorizontalPanel();
 	  private Label welcomeLabel;
+	  private Button updateDatabaseButton = new Button("Update Database");
 	  
 	/**
 	 * This is the entry point method.
@@ -99,6 +100,10 @@ public class Thirst implements EntryPoint {
 		mainPanel.add(signOutLink);
 		welcomePanel.add(welcomeLabel);
 		mainPanel.add(welcomePanel);
+		if (loginInfo.getIsAdmin())
+		{
+			mainPanel.add(updateDatabaseButton);
+		}
 	}
 	
 	private void handleError(Throwable error) {
