@@ -1,5 +1,6 @@
 package punishers.thirst.client;
 
+import punishers.thirst.server.CSVReader;
 import punishers.thirst.shared.FieldVerifier;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -103,6 +104,11 @@ public class Thirst implements EntryPoint {
 		if (loginInfo.getIsAdmin())
 		{
 			mainPanel.add(updateDatabaseButton);
+			updateDatabaseButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					CSVReader.updateData();
+				}
+			});
 		}
 	}
 	
