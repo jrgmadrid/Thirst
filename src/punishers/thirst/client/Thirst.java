@@ -24,6 +24,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -53,9 +54,10 @@ public class Thirst implements EntryPoint {
       private Button addWaterFountainButton = new Button("Add");
       private Button updateDatabaseButton = new Button("Update Database");
       private ArrayList<String> waterFountains = new ArrayList<String>();
-	  
+	  private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
+	  private static boolean isAdmin = true;
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
@@ -92,6 +94,12 @@ public class Thirst implements EntryPoint {
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
+		toggleAdmin.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				isAdmin = ((CheckBox) event.getSource()).getValue();
+			}
+		});
+		loginPanel.add(toggleAdmin);
 		RootPanel.get("thirstList").add(loginPanel);
 		
 		// facebook login panel
@@ -111,7 +119,7 @@ public class Thirst implements EntryPoint {
 		waterFountainFlexTable.getRowFormatter().addStyleName(0, "favoritesListHeader");
 		waterFountainFlexTable.addStyleName("favoritesList");
 		
-		loadWaterFountains();
+		//loadWaterFountains();
 		
 		addPanel.add(newIdTextBox);
 		addPanel.add(addWaterFountainButton);
@@ -119,7 +127,7 @@ public class Thirst implements EntryPoint {
 		
 		mainPanel.add(welcomeLabel);
 		
-		if (!loginInfo.getIsAdmin())
+		if (!isAdmin)
 		{
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
@@ -145,7 +153,9 @@ public class Thirst implements EntryPoint {
 		}
 		else
 		{
+			
 			mainPanel.add(updateDatabaseButton);
+			RootPanel.get("logged_in").add(mainPanel);
 			updateDatabaseButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					updateDatabase();

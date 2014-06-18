@@ -20,24 +20,24 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 	 * A set of water fountains that will be committed to the database once it is parsed
 	 */
 	@Persistent
-	private static Set<WaterFountain> waterFountains = new HashSet<WaterFountain>();
+	private static Set<String> waterFountains = new HashSet<String>();
 	
 	/*
 	 * Water fountain set getter
 	 */
-	public Set<WaterFountain> getWaterFountains() {
+	public Set<String> getWaterFountains() {
 		return waterFountains;
 	}
 	
-	public WaterFountain retrieveFromSet(int id) {
+	public String retrieveFromSet(int id) {
 		WaterFountain result = null;
-		for (WaterFountain wf : waterFountains) {
-			if (wf.getId() == id) {
-				result = wf;
+		for (String wf : waterFountains) {
+			if (wf.length() == id) {
+				result = null;
 				break;
 			}
 		}
-		return result;
+		return null;
 	}
 	
 	public void updateData() {
@@ -85,7 +85,7 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 				//Sets the ID of the water fountain which will be the key for the entity in the database
 				fountain.setId();
 				//Adds the water fountain to the set which will then be stored in the database
-				waterFountains.add(fountain);
+				waterFountains.add("fountain");
 			}
 				
 			
