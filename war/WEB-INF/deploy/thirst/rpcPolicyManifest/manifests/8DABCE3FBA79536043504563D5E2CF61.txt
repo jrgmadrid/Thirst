@@ -1,0 +1,2 @@
+serviceClass: punishers.thirst.client.GreetingService
+path: C9D35AD567B444F95609E40D8CB03A17.gwt.rpc

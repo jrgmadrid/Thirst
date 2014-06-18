@@ -26,7 +26,7 @@ public class WaterFountain {
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private int id;
+	private long id;
 	
 	@Persistent
 	private Set<User> users;
@@ -48,7 +48,11 @@ public class WaterFountain {
 	 * Sets the Id of the water fountain (done during the parsing process
 	 */
 	public void setId() {
-		this.id = hashCode();
+		long temp = Long.valueOf(hashCode());
+		if (temp < 0)
+			this.id = temp * -1;
+		else
+			this.id = temp;
 	}
 	
 	/*
@@ -58,52 +62,46 @@ public class WaterFountain {
 		users.add(u);
 	}
 	
+	
 	/*
-	 * Gets a user from the set of users
+	 * Gets the set of users
 	 */
-	public User getUser(User u) {
-		User result = null;
-		for (User user : users) {
-			if (user.equals(u)) {
-				result = user;
-				break;
-			}
-		}
-		return result;
+	public Set<User> getUsers() {
+		return this.users;
 	}
 	
 	/*
 	 * Gets the id value for the water fountain
 	 */
-	public int getId(WaterFountain wf) {
+	public long getId() {
 		return this.id;
 	}
 	
 	/*
 	 * Gets the latitude value of the water fountain
 	 */
-	public double getLatitude(WaterFountain wf) {
+	public double getLatitude() {
 		return this.lat;
 	}
 	
 	/*
 	 * Gets the longitude of the water fountain
 	 */
-	public double getLongitude(WaterFountain wf) {
+	public double getLongitude() {
 		return this.lon;
 	}
 	
 	/*
 	 * Gets the location of the water fountain
 	 */
-	public String getLocation(WaterFountain wf) {
+	public String getLocation() {
 		return this.location;
 	}
 	
 	/*
 	 * Gets the maintainer of the water fountain
 	 */
-	public String getMaintainer(WaterFountain wf) {
+	public String getMaintainer() {
 		return this.maintainer;
 	}
 	

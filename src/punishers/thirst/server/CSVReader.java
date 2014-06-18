@@ -28,7 +28,7 @@ public class CSVReader {
 	public static WaterFountain retrieveFromSet(int id) {
 		WaterFountain result = null;
 		for (WaterFountain wf : waterFountains) {
-			if (wf.getId(wf) == id) {
+			if (wf.getId() == id) {
 				result = wf;
 				break;
 			}
