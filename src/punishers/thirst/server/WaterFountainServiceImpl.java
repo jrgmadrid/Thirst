@@ -75,6 +75,18 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
+	public Set<Integer> getAllIds() throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			Set<Integer> ids = (HashSet<Integer>) q.execute();
+			return ids;
+		} finally {
+			pm.close();
+		}
+	}
+	
 	private void checkLoggedIn() throws NotLoggedInException {
 	  if (getUser() == null) {
 	    throw new NotLoggedInException("Not logged in.");

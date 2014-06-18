@@ -1,6 +1,7 @@
 package punishers.thirst.client;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import punishers.thirst.shared.FieldVerifier;
 
@@ -127,11 +128,11 @@ public class Thirst implements EntryPoint {
 	
 	private void displayFountains(String [] symbols) {
 		for (String symbol : symbols) {
-			diplayFountain(symbol);
+			displayFountain(symbol);
 		}
 	}
 	
-	private void diplayFountain(String symbol) {
+	private void displayFountain(String symbol) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -141,7 +142,40 @@ public class Thirst implements EntryPoint {
 	// a waterfountain's map pop-up
 	// discuss with Avery
 	private void addWaterFountain() {
-		
+		final int idNum = Integer.valueOf(newIdTextBox.getText().trim());
+		newIdTextBox.setFocus(true);
+		waterFountainService.getAllIds(new AsyncCallback<Set<Integer>>(){
+			public void onFailure(Throwable error) {
+			}
+			public void onSuccess(Set<Integer> ids) {
+				if (!validateId(idNum, ids)) {
+					Window.alert("'" + String.valueOf(idNum) + "' is not a valid ID");
+					newIdTextBox.selectAll();
+					return;
+				}
+				newIdTextBox.setText("");
+				if (waterFountains.contains(String.valueOf(idNum))) {
+					return;
+				}
+				addFountainToFavs(idNum);					
+			}
+		});
+	}
+	
+	private boolean validateId(int idNum, Set<Integer> ids) {
+		return ids.contains(idNum);
+	}
+	
+	private void addFountainToFavs(final int id) {
+		waterFountainService.addWaterFountainToFavs(id, new AsyncCallback<Void>(){
+			public void onFailure(Throwable error) {
+				handleError(error);
+			}
+			public void onSuccess(Void ignore) {
+				String idString = String.valueOf(id);
+				displayFountain(idString);
+			}
+		});
 	}
 	
 	private void handleError(Throwable error) {
