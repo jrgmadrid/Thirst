@@ -63,13 +63,19 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		PersistenceManager pm = getPersistenceManager();
 		List<String> results = new ArrayList<String>();
 		try {
-			Query q = pm.newQuery("select WaterFountain " + "from " + WaterFountain.class.getName());
+			Query q = pm.newQuery(WaterFountain.class);
 			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
 			for(WaterFountain wf : waterFountains) {
-				for (User user : wf.getUsers()) {
-					if(user == getUser()) {
-						results.add(wf.getLocation());
+				Set<User> people = wf.getUsers();
+				if(!people.isEmpty()) {
+					for (User user : wf.getUsers()) {
+						if(user == getUser()) {
+							results.add(wf.getLocation());
+						}
 					}
+				}
+				else {
+					System.out.println("No Users found.");
 				}
 			}
 		} finally {
@@ -83,7 +89,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Long> results = null;
 		try {
-			Query q = pm.newQuery("select WaterFountain " + "from " + WaterFountain.class.getName());
+			Query q = pm.newQuery(WaterFountain.class);
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
 			if(!wfs.isEmpty()){
 				for(WaterFountain wf : wfs) {
