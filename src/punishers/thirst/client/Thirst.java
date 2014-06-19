@@ -57,7 +57,7 @@ public class Thirst implements EntryPoint {
 	  private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
-	  private static boolean isAdmin = true;
+	  private boolean isAdmin = false;
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
@@ -127,7 +127,7 @@ public class Thirst implements EntryPoint {
 		
 		mainPanel.add(welcomeLabel);
 		
-		if (!isAdmin)
+		if (!loginInfo.getIsAdmin())
 		{
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
@@ -152,16 +152,19 @@ public class Thirst implements EntryPoint {
 		    });
 		}
 		else
-		{
-			
-			mainPanel.add(updateDatabaseButton);
-			RootPanel.get("logged_in").add(mainPanel);
-			updateDatabaseButton.addClickHandler(new ClickHandler() {
-				public void onClick(ClickEvent event) {
-					updateDatabase();
-				}
-			});
-		}
+			loadAdminControls();
+	}
+	
+	private void loadAdminControls() {
+		mainPanel.add(signOutLink);
+		mainPanel.add(updateDatabaseButton);
+		RootPanel.get("logged_in").add(mainPanel);
+		updateDatabaseButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				updateDatabase();
+			}
+		});
+		
 	}
 	
 	private void updateDatabase() {
@@ -175,6 +178,7 @@ public class Thirst implements EntryPoint {
 		// likely going to change the return type of getFavWaterFountains
 		waterFountainService.getFavWaterFountains(new AsyncCallback<String[]>() {
 			public void onFailure(Throwable error) {
+				System.out.println("ARGH");
 			}
 			public void onSuccess(String[] symbols) {
 				displayFountains(symbols);
@@ -207,7 +211,7 @@ public class Thirst implements EntryPoint {
 	}
 	
 	private void removeWaterFountain(final String symbol) {
-		int id = Integer.valueOf(symbol);
+		long id = Long.valueOf(symbol);
 		waterFountainService.removeWaterFountainFromFavs(id, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -229,12 +233,12 @@ public class Thirst implements EntryPoint {
 	// a waterfountain's map pop-up
 	// discuss with Avery
 	private void addWaterFountain() {
-		final int idNum = Integer.valueOf(newIdTextBox.getText().trim());
+		final long idNum = Long.valueOf(newIdTextBox.getText().trim());
 		newIdTextBox.setFocus(true);
-		waterFountainService.getAllIds(new AsyncCallback<Set<Integer>>(){
+		waterFountainService.getAllIds(new AsyncCallback<Set<Long>>(){
 			public void onFailure(Throwable error) {
 			}
-			public void onSuccess(Set<Integer> ids) {
+			public void onSuccess(Set<Long> ids) {
 				if (!validateId(idNum, ids)) {
 					Window.alert("'" + String.valueOf(idNum) + "' is not a valid ID");
 					newIdTextBox.selectAll();
@@ -249,11 +253,11 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
-	private boolean validateId(int idNum, Set<Integer> ids) {
+	private boolean validateId(long idNum, Set<Long> ids) {
 		return ids.contains(idNum);
 	}
 	
-	private void addFountainToFavs(final int id) {
+	private void addFountainToFavs(final long id) {
 		waterFountainService.addWaterFountainToFavs(id, new AsyncCallback<Void>(){
 			public void onFailure(Throwable error) {
 				handleError(error);

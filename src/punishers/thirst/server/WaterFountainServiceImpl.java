@@ -26,7 +26,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	private static final Logger LOG = Logger.getLogger(WaterFountainServiceImpl.class.getName());
 	
 	
-	public void addWaterFountainToFavs(int id) throws NotLoggedInException {
+	public void addWaterFountainToFavs(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -37,7 +37,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 
-	public void removeWaterFountainFromFavs(int id) throws NotLoggedInException {
+	public void removeWaterFountainFromFavs(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
@@ -59,7 +59,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			Query q = pm.newQuery(WaterFountain.class, "users.contnains(getUser())");
+			Query q = pm.newQuery(WaterFountain.class, "users.contains(getUser())");
 			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
 			String[] resultingArray = new String[waterFountains.size()];
 			int i = 0;
@@ -75,12 +75,12 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
-	public Set<Integer> getAllIds() throws NotLoggedInException {
+	public Set<Long> getAllIds() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
-			Set<Integer> ids = (HashSet<Integer>) q.execute();
+			Set<Long> ids = (HashSet<Long>) q.execute();
 			return ids;
 		} finally {
 			pm.close();
