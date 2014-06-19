@@ -24,6 +24,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -51,14 +52,15 @@ public class Thirst implements EntryPoint {
       private HorizontalPanel addPanel = new HorizontalPanel();  
       private TextBox newIdTextBox = new TextBox();  
       private Button addWaterFountainButton = new Button("Add");
-      
+      private Button updateDatabaseButton = new Button("Update Database");
       private ArrayList<String> waterFountains = new ArrayList<String>();
-	  
+	  private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
+	  private static boolean isAdmin = true;
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
-	  
+	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
 	  // Facebook Login 
 	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
 	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
@@ -92,6 +94,12 @@ public class Thirst implements EntryPoint {
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
+		toggleAdmin.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				isAdmin = ((CheckBox) event.getSource()).getValue();
+			}
+		});
+		loginPanel.add(toggleAdmin);
 		RootPanel.get("thirstList").add(loginPanel);
 		
 		// facebook login panel
@@ -111,34 +119,56 @@ public class Thirst implements EntryPoint {
 		waterFountainFlexTable.getRowFormatter().addStyleName(0, "favoritesListHeader");
 		waterFountainFlexTable.addStyleName("favoritesList");
 		
-		loadWaterFountains();
+		//loadWaterFountains();
 		
 		addPanel.add(newIdTextBox);
 		addPanel.add(addWaterFountainButton);
 		addPanel.addStyleName("addPanel");
 		
 		mainPanel.add(welcomeLabel);
-		mainPanel.add(waterFountainFlexTable);
-		mainPanel.add(addPanel);
-		mainPanel.add(signOutLink);
 		
-		RootPanel.get("logged_in").add(mainPanel);
-		
-		newIdTextBox.setFocus(true);
-		
-	    addWaterFountainButton.addClickHandler(new ClickHandler() {
-	    	public void onClick(ClickEvent event) {
-	    		addWaterFountain();
-	    	}
-	    });
-	    
-	    newIdTextBox.addKeyDownHandler(new KeyDownHandler() {
-	    	public void onKeyDown(KeyDownEvent event) {
-	    		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-	    			addWaterFountain();
-	    		}
-	        }
-	    });
+		if (!isAdmin)
+		{
+			mainPanel.add(waterFountainFlexTable);
+			mainPanel.add(addPanel);
+			mainPanel.add(signOutLink);
+			
+			RootPanel.get("logged_in").add(mainPanel);
+			
+			newIdTextBox.setFocus(true);
+			
+		    addWaterFountainButton.addClickHandler(new ClickHandler() {
+		    	public void onClick(ClickEvent event) {
+		    		addWaterFountain();
+		    	}
+		    });
+		    
+		    newIdTextBox.addKeyDownHandler(new KeyDownHandler() {
+		    	public void onKeyDown(KeyDownEvent event) {
+		    		if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+		    			addWaterFountain();
+		    		}
+		        }
+		    });
+		}
+		else
+		{
+			
+			mainPanel.add(updateDatabaseButton);
+			RootPanel.get("logged_in").add(mainPanel);
+			updateDatabaseButton.addClickHandler(new ClickHandler() {
+				public void onClick(ClickEvent event) {
+					updateDatabase();
+				}
+			});
+		}
+	}
+	
+	private void updateDatabase() {
+		csvReaderService.updateData(new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {}
+			public void onSuccess(Void result) {}
+		});
 	}
 	
 	private void loadWaterFountains() {
