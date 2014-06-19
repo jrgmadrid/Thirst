@@ -19,6 +19,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @PersistenceCapable
 public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVReaderService {
+
 	/*
 	 * A set of water fountains that will be committed to the database once it is parsed
 	 */

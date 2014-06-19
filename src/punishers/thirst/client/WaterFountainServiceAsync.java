@@ -1,5 +1,6 @@
 package punishers.thirst.client;
 
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -12,6 +13,6 @@ public interface WaterFountainServiceAsync {
 	
 	public void getFavWaterFountains(AsyncCallback<String[]> async);
 
-	public void getAllIds(AsyncCallback<Set<Long>> callback);
+	public void getAllIds(AsyncCallback<Long[]> callback);
 
 }

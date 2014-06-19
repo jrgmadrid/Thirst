@@ -1,7 +1,6 @@
 package punishers.thirst.server;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -30,7 +29,10 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
+//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
+			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
+					"where id == idParam " + "parameters Long idParam");
+			WaterFountain wf = (WaterFountain) q.execute(id);
 			wf.addUser(getUser());
 		} finally {
 			pm.close();
@@ -41,9 +43,10 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
-			Query q = pm.newQuery(WaterFountain.class, "user == u");
-			q.declareParameters("com.google.appengine.api.users.User u");
+//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
+			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
+					"where id == idParam " + "parameters Long idParam");
+			WaterFountain wf = (WaterFountain) q.execute(id);
 			Set<User> users = wf.getUsers();
 			for(User user : users) {
 				if(user.equals(getUser())){
@@ -58,31 +61,39 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	public String[] getFavWaterFountains() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
+		List<String> results = new ArrayList<String>();
 		try {
-			Query q = pm.newQuery(WaterFountain.class, "users.contains(getUser())");
-			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
-			String[] resultingArray = new String[waterFountains.size()];
-			int i = 0;
-			for (WaterFountain wf : waterFountains) {
-				String result = wf.getLocation() + ", " + String.valueOf(wf.getLatitude()) + 
-						", " + String.valueOf(wf.getLongitude()) + ", " + String.valueOf(wf.getId());	
-				resultingArray[i] = result;
-				i++;
+			Query q = pm.newQuery("select WaterFountain " + "from " + WaterFountain.class.getName());
+			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
+			for(WaterFountain wf : waterFountains) {
+				for (User user : wf.getUsers()) {
+					if(user == getUser()) {
+						results.add(wf.getLocation());
+					}
+				}
 			}
-			return resultingArray;
 		} finally {
 			pm.close();
 		}
+		return (String[]) results.toArray(new String[0]);
 	}
 	
-	public Set<Long> getAllIds() throws NotLoggedInException {
+	public Long[] getAllIds() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
+		ArrayList<Long> results = null;
 		try {
-			Query q = pm.newQuery(WaterFountain.class);
-			Set<Long> ids = (HashSet<Long>) q.execute();
-			q.closeAll();
-			return ids;
+			Query q = pm.newQuery("select WaterFountain " + "from " + WaterFountain.class.getName());
+			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
+			if(!wfs.isEmpty()){
+				for(WaterFountain wf : wfs) {
+					results = new ArrayList<Long>();
+					results.add(wf.getId());
+				}
+			} else {
+				System.out.println("No Results.");
+			}
+			return (Long[]) results.toArray();
 		} finally {
 			pm.close();
 		}

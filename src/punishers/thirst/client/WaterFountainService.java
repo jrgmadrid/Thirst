@@ -1,7 +1,5 @@
 package punishers.thirst.client;
 
-import java.util.Set;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -15,5 +13,5 @@ public interface WaterFountainService extends RemoteService {
 	
 	public String[] getFavWaterFountains() throws NotLoggedInException;
 	
-	public Set<Long> getAllIds() throws NotLoggedInException;
+	public Long[] getAllIds() throws NotLoggedInException;
 }
