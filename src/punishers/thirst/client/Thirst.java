@@ -24,6 +24,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -53,15 +54,19 @@ public class Thirst implements EntryPoint {
       private Button addWaterFountainButton = new Button("Add");
       private Button updateDatabaseButton = new Button("Update Database");
       private ArrayList<String> waterFountains = new ArrayList<String>();
+      
+      private CheckBox toggleAdmin = new CheckBox("Toggle Admin controls");
+      private boolean isAdmin;
 	  
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
-	  // Facebook Login 
-	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
-	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
+	  
+	  // Facebook Login, not needed until sprint 2
+//	  private VerticalPanel facebookLoginPanel = new VerticalPanel();
+//	  private Label facebookLoginLabel = new Label("Or be a social drinker and login with Facebook.");
 
 	  private HorizontalPanel welcomePanel = new HorizontalPanel();
 	  private Label welcomeLabel;
@@ -92,26 +97,29 @@ public class Thirst implements EntryPoint {
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
+		toggleAdmin.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				isAdmin = toggleAdmin.getValue();
+			}
+		});
+		loginPanel.add(toggleAdmin);
 		RootPanel.get("thirstList").add(loginPanel);
 		
 		// facebook login panel
-		facebookLoginPanel.add(facebookLoginLabel);
-		RootPanel.get("thirstList").add(facebookLoginPanel);
+//		facebookLoginPanel.add(facebookLoginLabel);
+//		RootPanel.get("thirstList").add(facebookLoginPanel);
 	}
 	
-	// the page that appears after the user has logged in.  
-	// add a facebook signout link
 	private void loadThirst() {
 		
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
 		
-		waterFountainFlexTable.setText(0, 0, "Location info");
+		waterFountainFlexTable.setText(0, 0, "WaterFountain!");
 		
 		waterFountainFlexTable.getRowFormatter().addStyleName(0, "favoritesListHeader");
 		waterFountainFlexTable.addStyleName("favoritesList");
 		
-		loadWaterFountains();
 		
 		addPanel.add(newIdTextBox);
 		addPanel.add(addWaterFountainButton);
@@ -119,7 +127,7 @@ public class Thirst implements EntryPoint {
 		
 		mainPanel.add(welcomeLabel);
 		
-		if (!loginInfo.getIsAdmin())
+		if (!isAdmin)
 		{
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
@@ -142,10 +150,14 @@ public class Thirst implements EntryPoint {
 		    		}
 		        }
 		    });
+		    
+		    loadWaterFountains();
 		}
 		else
 		{
 			mainPanel.add(updateDatabaseButton);
+			mainPanel.add(signOutLink);
+			RootPanel.get("logged_in").add(mainPanel);
 			updateDatabaseButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
 					updateDatabase();
@@ -162,7 +174,7 @@ public class Thirst implements EntryPoint {
 	}
 	
 	private void loadWaterFountains() {
-		// likely going to change the return type of getFavWaterFountains
+		// getFavWaterFountains() is not working.
 		waterFountainService.getFavWaterFountains(new AsyncCallback<String[]>() {
 			public void onFailure(Throwable error) {
 			}
@@ -178,22 +190,54 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
-	private void displayFountain(final String symbol) {
-		int row = waterFountainFlexTable.getRowCount();
-		waterFountains.add(symbol);
-		waterFountainFlexTable.setText(row, 0, symbol);
-		waterFountainFlexTable.setWidget(row, 2, new Label());
-			
-		waterFountainFlexTable.getCellFormatter();
-			
-		Button removeWaterFountainButton = new Button("x");
-		removeWaterFountainButton.addStyleDependentName("remove");
-			
-		removeWaterFountainButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				removeWaterFountain(symbol);
-			}
+	private void addWaterFountain() {
+	    final String symbol = newIdTextBox.getText().toUpperCase().trim();
+	    newIdTextBox.setFocus(true);
+
+	    // WaterFountain must be a number that is 16 characters long
+	    if (!symbol.matches("^[0-9]{16}$")) {
+	      Window.alert("Please enter 16 character integer");
+	      newIdTextBox.selectAll();
+	      return;
+	    }
+
+	    newIdTextBox.setText("");
+
+	    if (waterFountains.contains(symbol))
+	        return;
+
+	    displayFountain(symbol);
+	    int id = Integer.parseInt(symbol);
+	    addFountainToFavs(id); 
+	}
+	
+	// this method is not working, users are not being added to a water fountain's set of users
+	private void addFountainToFavs(final int id) {
+		waterFountainService.addWaterFountainToFavs(id, new AsyncCallback<Void>() {
+			public void onFailure(Throwable error) {
+		    }
+		    public void onSuccess(Void ignore) {
+		    	String symbol = Integer.toString(id);
+		    	displayFountain(symbol);
+		    }
 		});
+	}
+	
+	private void displayFountain(final String symbol) {
+	    int row = waterFountainFlexTable.getRowCount();
+	    waterFountains.add(symbol);
+	    waterFountainFlexTable.setText(row, 0, symbol);
+
+	    Button removeWaterFountainButton = new Button("x");
+	    removeWaterFountainButton.addClickHandler(new ClickHandler() {
+	      public void onClick(ClickEvent event) {
+	        int removedIndex = waterFountains.indexOf(symbol);
+	        waterFountains.remove(removedIndex);        
+	        waterFountainFlexTable.removeRow(removedIndex + 1);
+	        removeWaterFountain(symbol);
+	      }
+	    });
+	    waterFountainFlexTable.setWidget(row, 3, removeWaterFountainButton);
 	}
 	
 	private void removeWaterFountain(final String symbol) {
@@ -212,47 +256,6 @@ public class Thirst implements EntryPoint {
 		int removedIndex = waterFountains.indexOf(symbol);
 		waterFountains.remove(removedIndex);
 		waterFountainFlexTable.removeRow(removedIndex+1);
-	}
-	
-	// add a user to a waterfountain's list of users.
-	// executed when a user clicks the favorite button on 
-	// a waterfountain's map pop-up
-	// discuss with Avery
-	private void addWaterFountain() {
-		final int idNum = Integer.valueOf(newIdTextBox.getText().trim());
-		newIdTextBox.setFocus(true);
-		waterFountainService.getAllIds(new AsyncCallback<Set<Integer>>(){
-			public void onFailure(Throwable error) {
-			}
-			public void onSuccess(Set<Integer> ids) {
-				if (!validateId(idNum, ids)) {
-					Window.alert("'" + String.valueOf(idNum) + "' is not a valid ID");
-					newIdTextBox.selectAll();
-					return;
-				}
-				newIdTextBox.setText("");
-				if (waterFountains.contains(String.valueOf(idNum))) {
-					return;
-				}
-				addFountainToFavs(idNum);					
-			}
-		});
-	}
-	
-	private boolean validateId(int idNum, Set<Integer> ids) {
-		return ids.contains(idNum);
-	}
-	
-	private void addFountainToFavs(final int id) {
-		waterFountainService.addWaterFountainToFavs(id, new AsyncCallback<Void>(){
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(Void ignore) {
-				String idString = String.valueOf(id);
-				displayFountain(idString);
-			}
-		});
 	}
 	
 	private void handleError(Throwable error) {

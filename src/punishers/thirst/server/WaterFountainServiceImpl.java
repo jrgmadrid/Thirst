@@ -30,8 +30,13 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == id");
+			q.declareParameters("id");
+			WaterFountain wf = (WaterFountain) q.execute("id");
 			wf.addUser(getUser());
+//			WaterFountain wf = pm.getObjectById(WaterFountain.class, id);
+//			wf.addUser(getUser());
 		} finally {
 			pm.close();
 		}
@@ -59,7 +64,8 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-			Query q = pm.newQuery(WaterFountain.class, "users.contnains(getUser())");
+			Query q = pm.newQuery(WaterFountain.class, "users.contains(getUser())");
+			q.declareParameters("com.google.appengine.api.users.User u");
 			Set<WaterFountain> waterFountains = (HashSet<WaterFountain>) q.execute();
 			String[] resultingArray = new String[waterFountains.size()];
 			int i = 0;
