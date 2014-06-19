@@ -1,0 +1,2 @@
+serviceClass: punishers.thirst.client.LoginService
+path: 733C4721F9F1C8EEA7208F06B5B82694.gwt.rpc

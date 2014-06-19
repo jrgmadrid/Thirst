@@ -81,6 +81,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
 			Set<Long> ids = (HashSet<Long>) q.execute();
+			q.closeAll();
 			return ids;
 		} finally {
 			pm.close();
