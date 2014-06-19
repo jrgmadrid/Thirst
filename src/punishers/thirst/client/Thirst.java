@@ -126,9 +126,6 @@ public class Thirst implements EntryPoint {
 		addPanel.addStyleName("addPanel");
 		
 		mainPanel.add(welcomeLabel);
-		
-		if (!loginInfo.getIsAdmin())
-		{
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
 			mainPanel.add(signOutLink);
@@ -150,10 +147,9 @@ public class Thirst implements EntryPoint {
 		    		}
 		        }
 		    });
-		}
-		else
-			loadAdminControls();
+		    loadAdminControls();
 	}
+		
 	
 	private void loadAdminControls() {
 		mainPanel.add(signOutLink);
@@ -240,6 +236,7 @@ public class Thirst implements EntryPoint {
 			}
 			public void onSuccess(Set<Long> ids) {
 				if (!validateId(idNum, ids)) {
+					System.out.println("YO YOU DUN FUCKED UP, SON");
 					Window.alert("'" + String.valueOf(idNum) + "' is not a valid ID");
 					newIdTextBox.selectAll();
 					return;
