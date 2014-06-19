@@ -9,8 +9,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 @RemoteServiceRelativePath("csvreader")
 public interface CSVReaderService extends RemoteService{
-	public Set<WaterFountain> getWaterFountains();
-	public WaterFountain retrieveFromSet(int id);
+	//public Set<WaterFountain> getWaterFountains();
+	//public WaterFountain retrieveFromSet(int id);
 	public void updateData();
 	
 }
