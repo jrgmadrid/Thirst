@@ -43,6 +43,36 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 	}
+	
+	public String[] getManyLocations(Long[] ids) throws NotLoggedInException {
+		String[] locations = new String[ids.length];
+		for (int i = 0; i < ids.length; i++)
+		{
+			locations[i] = getLatLon(ids[i]);
+		}
+		return locations;
+	}
+	
+	public String getLatLon(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		double lat = 0;
+		double lon = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			lat = wf.getLatitude();
+			lon = wf.getLongitude();
+			
+		} finally {
+			pm.close();
+		}
+		return String.valueOf(lat) + "," + String.valueOf(lon);
+	}
 
 	public void removeWaterFountainFromFavs(long id) throws NotLoggedInException {
 		checkLoggedIn();
