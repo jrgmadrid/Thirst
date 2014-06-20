@@ -91,13 +91,16 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-			if(!wfs.isEmpty()){
+			System.out.println("The query has executed.");
+			if(wfs != null){
+				System.out.println("WFS is not null.");
+				System.out.println(wfs.size() + " It's empty.");
 				for(WaterFountain wf : wfs) {
 					results = new ArrayList<Long>();
 					results.add(wf.getId());
 				}
 			} else {
-				System.out.println("No Results.");
+				System.out.println("There are no ids to be found.");
 			}
 			return (Long[]) results.toArray();
 		} finally {
