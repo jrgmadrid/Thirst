@@ -15,6 +15,15 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.maps.client.InfoWindowContent;
+import com.google.gwt.maps.client.MapWidget;
+import com.google.gwt.maps.client.Maps;
+import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 import punishers.thirst.client.LoginInfo;
 import punishers.thirst.client.LoginService;
@@ -151,6 +160,10 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
+	private void loadMap() {
+		
+	}
+	
 	private void loadAdminControls() {
 		mainPanel.add(signOutLink);
 		mainPanel.add(updateDatabaseButton);
@@ -243,6 +256,19 @@ public class Thirst implements EntryPoint {
 				}
 				
 				addWaterFountainToFavs(idNum);			
+			}
+		});
+	}
+	
+	private void loadMap() {
+		final List<LatLng> latLngs = new ArrayList<LatLng>();
+		waterFountainService.getAllLatLng(new AsyncCallback<LatLng[]>() {
+			public void onFailure(Throwable error) { }
+			public void onSuccess(LatLng[] result) {
+				for (int i = 0; i < result.length; i++) {
+					latLngs.add(result[i]);
+				}
+				
 			}
 		});
 	}

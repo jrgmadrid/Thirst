@@ -1,0 +1,2 @@
+serviceClass: punishers.thirst.client.CSVReaderService
+path: D12B057EE9B217A8C1E63B98736FDD9F.gwt.rpc

@@ -16,6 +16,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.maps.client.geom.LatLng;
 
 import punishers.thirst.client.NotLoggedInException;
 import punishers.thirst.client.WaterFountainService;
@@ -112,6 +113,36 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 		return (Long[]) results.toArray(new Long[size]);
+	}
+	
+	public LatLng[] getAllLatLng() throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		ArrayList<LatLng> results = null;
+		int size = 0;
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
+			System.out.println("The query has executed.");
+			if(wfs != null){
+				System.out.println("WFS is not null.");
+				System.out.println(wfs.size());
+				size = wfs.size();
+				results = new ArrayList<LatLng>();
+				for(WaterFountain wf : wfs) {
+					double lat = wf.getLatitude();
+					double lon = wf.getLongitude();
+					results.add(LatLng.newInstance(lat, lon));
+				}
+			} else {
+				System.out.println("There are no ids to be found.");
+			}
+			
+		} finally {
+			pm.close();
+		}
+		return (LatLng[]) results.toArray(new LatLng[size]);
 	}
 	
 	private void checkLoggedIn() throws NotLoggedInException {
