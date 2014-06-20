@@ -42,6 +42,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
+	// given an array of Longs (ids), returns the latitudes and longitudes of those water fountains
 	public String[] getManyLocations(Long[] ids) throws NotLoggedInException {
 		String[] locations = new String[ids.length];
 		for (int i = 0; i < ids.length; i++)
@@ -51,6 +52,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		return locations;
 	}
 	
+	// helper method for getManyLocations
 	public String getLatLon(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		double lat = 0;
@@ -70,6 +72,37 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			pm.close();
 		}
 		return String.valueOf(lat) + "," + String.valueOf(lon);
+	}
+	
+	// given an array of Longs(ids), returns the location strings for those water fountains
+	public String[] getManyLocationStrings(Long[] ids) throws NotLoggedInException {
+		String[] locations = new String[ids.length];
+		for (int i = 0; i < ids.length; i++)
+		{
+			locations[i] = getSingleLocation(ids[i]);
+		}
+		return locations;
+	}
+	
+	// helper method for getManyLocations
+	public String getSingleLocation(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		String location = "";
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+
+			location = wf.getLocation();
+			
+		} finally {
+			pm.close();
+		}
+		return location;
 	}
 
 	public void removeWaterFountainFromFavs(long id) throws NotLoggedInException {
