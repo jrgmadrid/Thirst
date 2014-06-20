@@ -30,10 +30,13 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		PersistenceManager pm = getPersistenceManager();
 		try {
 //			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
-			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
-					"where id == idParam " + "parameters Long idParam");
+//			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 				"where id == idParam " + "parameters Long idParam");
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
 			q.declareImports("import punishers.thirst.server.WaterFountain");
-			WaterFountain wf = (WaterFountain) q.execute(id);
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
 			wf.addUser(getUser());
 		} finally {
 			pm.close();
@@ -45,10 +48,12 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		PersistenceManager pm = getPersistenceManager();
 		try {
 //			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
-			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
-					"where id == idParam " + "parameters Long idParam");
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
 			q.declareImports("import punishers.thirst.server.WaterFountain");
-			WaterFountain wf = (WaterFountain) q.execute(id);
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
 			Set<User> users = wf.getUsers();
 			for(User user : users) {
 				if(user.equals(getUser())){
