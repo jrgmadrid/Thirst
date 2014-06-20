@@ -54,7 +54,7 @@ public class Thirst implements EntryPoint {
       private TextBox newIdTextBox = new TextBox();  
       private Button addWaterFountainButton = new Button("Add");
       private Button updateDatabaseButton = new Button("Update Database");
-      private ArrayList<String> waterFountains = new ArrayList<String>();
+      private ArrayList<Long> waterFountains = new ArrayList<Long>();
 
 	  private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 
@@ -121,6 +121,7 @@ public class Thirst implements EntryPoint {
 		
 		if (!isAdmin)
 		{
+			loadWaterFountains();
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
 			mainPanel.add(signOutLink);
@@ -143,7 +144,7 @@ public class Thirst implements EntryPoint {
 		        }
 		    });
 		    
-		    loadWaterFountains();
+		    
 		}
 		else {
 			loadAdminControls();
@@ -169,26 +170,26 @@ public class Thirst implements EntryPoint {
 	}
 	
 	private void loadWaterFountains() {
-		waterFountainService.getFavWaterFountains(new AsyncCallback<String[]>() {
+		waterFountainService.getFavWaterFountains(new AsyncCallback<Long[]>() {
 			public void onFailure(Throwable error) {
-				System.out.println("ARGH");
+				Window.alert("yo");
 			}
-			public void onSuccess(String[] symbols) {
+			public void onSuccess(Long[] symbols) {
 				displayFountains(symbols);
 			}
 		});
 	}
 	
-	private void displayFountains(String [] symbols) {
-		for (String symbol : symbols) {
+	private void displayFountains(Long [] symbols) {
+		for (Long symbol : symbols) {
 			displayFountain(symbol);
 		}
 	}
 	
-	private void displayFountain(final String symbol) {
+	private void displayFountain(final Long symbol) {
 	    int row = waterFountainFlexTable.getRowCount();
 	    waterFountains.add(symbol);
-	    waterFountainFlexTable.setText(row, 0, symbol);
+	    waterFountainFlexTable.setText(row, 0, String.valueOf(symbol));
 
 	    Button removeWaterFountainButton = new Button("x");
 	    removeWaterFountainButton.addClickHandler(new ClickHandler() {
@@ -202,7 +203,7 @@ public class Thirst implements EntryPoint {
 	    waterFountainFlexTable.setWidget(row, 3, removeWaterFountainButton);
 	}
 	
-	private void removeWaterFountain(final String symbol) {
+	private void removeWaterFountain(final Long symbol) {
 		long id = Long.valueOf(symbol);
 		waterFountainService.removeWaterFountainFromFavs(id, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
@@ -214,7 +215,7 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
-	private void undisplayWaterFountain(String symbol) {
+	private void undisplayWaterFountain(Long symbol) {
 		int removedIndex = waterFountains.indexOf(symbol);
 		waterFountains.remove(removedIndex);
 		waterFountainFlexTable.removeRow(removedIndex+1);
@@ -262,8 +263,7 @@ public class Thirst implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Void ignore) {
-				String idString = String.valueOf(id);
-				displayFountain(idString);
+				displayFountain(id);
 			}
 		});
 	}

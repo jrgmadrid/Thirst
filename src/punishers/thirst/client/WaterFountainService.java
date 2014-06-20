@@ -11,7 +11,7 @@ public interface WaterFountainService extends RemoteService {
 	
 	public void removeWaterFountainFromFavs(long id) throws NotLoggedInException;
 	
-	public String[] getFavWaterFountains() throws NotLoggedInException;
+	public Long[] getFavWaterFountains() throws NotLoggedInException;
 	
 	public Long[] getAllIds() throws NotLoggedInException;
 }

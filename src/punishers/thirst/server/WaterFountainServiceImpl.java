@@ -14,6 +14,7 @@ import javax.jdo.Query;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import punishers.thirst.client.NotLoggedInException;
@@ -65,31 +66,24 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 
-	public String[] getFavWaterFountains() throws NotLoggedInException {
+	public Long[] getFavWaterFountains() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		List<String> results = new ArrayList<String>();
+		List<Long> results = new ArrayList<Long>();
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
 			q.declareImports("import punishers.thirst.server.WaterFountain");
 			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
 			for(WaterFountain wf : waterFountains) {
 				Set<User> people = wf.getUsers();
-				if(!people.isEmpty()) {
-					for (User user : wf.getUsers()) {
-						if(user == getUser()) {
-							results.add(wf.getLocation());
-						}
-					}
-				}
-				else {
-					System.out.println("No users found for water fountain " + wf.getId());
+				if(people.contains(getUser())) {
+					results.add(wf.getId());
 				}
 			}
 		} finally {
 			pm.close();
 		}
-		return (String[]) results.toArray(new String[0]);
+		return (Long[]) results.toArray(new Long[results.size()]);
 	}
 	
 	public Long[] getAllIds() throws NotLoggedInException {

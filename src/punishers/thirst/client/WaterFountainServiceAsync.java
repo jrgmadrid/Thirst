@@ -11,7 +11,7 @@ public interface WaterFountainServiceAsync {
 	
 	public void removeWaterFountainFromFavs(long id, AsyncCallback<Void> async);
 	
-	public void getFavWaterFountains(AsyncCallback<String[]> async);
+	public void getFavWaterFountains(AsyncCallback<Long[]> asyncCallback);
 
 	public void getAllIds(AsyncCallback<Long[]> callback);
 
