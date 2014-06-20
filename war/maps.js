@@ -18,6 +18,7 @@ The javascript map handler for Thirst
 
 var fountains;
 var favorites;
+var listeners;
 var map;
 var markers;
 google.maps.event.addDomListener(window, 'load', mapInitialize);
@@ -106,18 +107,6 @@ function getFountains(){
 	return fountains;
 }
 
-
-/*
-findBounds - find the bounds to set the zoom level for tha map
-
-Params:
-	p: An array of points
-Returns:
-	A maps.LatLngBounds object
-*/
-function findBounds(p){
-
-}
 /*
 findCenter - find the center point of a set of points
 
@@ -168,15 +157,19 @@ mapInitialize - initialize the map
 function mapInitialize(){
 	fountains = getFountains();
 	favorites = getFavorites();
-	var options = mapSetup(findCenter(fountains),10);
+	var options = mapSetup(findCenter(fountains),12);
 	map = new google.maps.Map(document.querySelector('#map'),options);
 	markers = mapMarkers(fountains);
 	drawFountains();
+}
 
-	/*var centerMark = new google.maps.Marker({
-		position: findCenter(points),
-		map: map,
-		title: "Center"});*/
+function mapListeners(m){
+	var info = new google.maps.InfoWindow({
+			content: "<div><h5>"+ m.position + "</h5></div>",
+		})
+		google.maps.event.addListener(m,'click',function(){
+			info.open(map, this);
+		});
 }
 
 /*
@@ -192,6 +185,8 @@ function mapMarkers(l){
 		var m = new google.maps.Marker({
 			position: l[i],
 		});
+		mapListeners(m);
+		
 		markers.push(m);
 	}
 	return markers;
