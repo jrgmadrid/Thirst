@@ -1,2 +1,0 @@
-serviceClass: punishers.thirst.client.WaterFountainService
-path: 42103AD6E0D106EC5A39F3D23BE9EF2C.gwt.rpc

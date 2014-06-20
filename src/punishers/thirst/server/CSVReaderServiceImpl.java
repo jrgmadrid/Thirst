@@ -7,6 +7,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
+import javax.jdo.JDOHelper;
+import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -16,11 +19,14 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @PersistenceCapable
 public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVReaderService {
+
 	/*
 	 * A set of water fountains that will be committed to the database once it is parsed
 	 */
 	@Persistent
 	private static Set<WaterFountain> waterFountains = new HashSet<WaterFountain>();
+	
+	private static final PersistenceManagerFactory PMF = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
 	/*
 	 * Water fountain set getter
@@ -44,7 +50,7 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 		
 		try {
 			//The URL that has the data
-			URL dataUrl = new URL("ftp://webftp.vancouver.ca/OpenData/csv/drinkingFountains.csv");
+			URL dataUrl = new URL("http://puu.sh/9zQpH/222953ccfd.csv");
 			//Opens the URL where the data is held
 			URLConnection urlConnect = dataUrl.openConnection();
 			//Reads the data 
@@ -83,9 +89,15 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 				//Makes a new water fountain with all of the information
 				WaterFountain fountain = new WaterFountain(lat, lon, location, maintainer);
 				//Sets the ID of the water fountain which will be the key for the entity in the database
-				fountain.setId();
+				//fountain.setId();
 				//Adds the water fountain to the set which will then be stored in the database
 				waterFountains.add(fountain);
+				PersistenceManager pm = getPersistenceManager();
+				try {
+					pm.makePersistent(fountain);
+				} finally {
+					pm.close();
+				}
 			}
 				
 			
@@ -94,5 +106,9 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private PersistenceManager getPersistenceManager() {
+		  return PMF.getPersistenceManager();
 	}
 }
