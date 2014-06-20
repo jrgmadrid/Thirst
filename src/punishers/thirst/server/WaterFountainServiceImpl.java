@@ -95,11 +95,12 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			System.out.println("Query?");
 			Query q = pm.newQuery(WaterFountain.class);
 			System.out.println("Query created! Execute query?");
-			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-			System.out.println("Query executed!?");
-			if(wfs != null) {
-				System.out.println("DO A THING");
-				System.out.println(wfs.size() + "YO");
+			List<WaterFountain> wfs = new ArrayList<WaterFountain>();
+			wfs = (List<WaterFountain>) q.execute();
+			System.out.println("The query has executed.");
+			if(wfs != null){
+				System.out.println("WFS is not null.");
+				System.out.println(wfs.size() + " It's empty.");
 				for(WaterFountain wf : wfs) {
 					System.out.println("We got into a for-loop!!???");
 					results = new ArrayList<Long>();
@@ -108,7 +109,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 					System.out.println("did we really get the ids? I guess we did");
 				}
 			} else {
-				System.out.println("No Results.");
+				System.out.println("There are no ids to be found.");
 			}
 			System.out.println("Wait, what");
 			return (Long[]) results.toArray();

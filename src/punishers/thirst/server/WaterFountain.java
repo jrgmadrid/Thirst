@@ -28,7 +28,7 @@ public class WaterFountain {
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private long id;
 	
-	@Persistent
+	@Persistent(defaultFetchGroup = "true")
 	private Set<User> users;
 	
 	/*
