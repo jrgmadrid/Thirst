@@ -122,7 +122,7 @@ public class Thirst implements EntryPoint {
 		if (!loginInfo.getIsAdmin())
 		{
 			loadWaterFountains();
-			
+
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
 			mainPanel.add(signOutLink);
