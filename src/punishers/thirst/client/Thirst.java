@@ -232,15 +232,16 @@ public class Thirst implements EntryPoint {
 			}
 			public void onSuccess(Long[] ids) {
 				if (!validateId(idNum, ids)) {
-					Window.alert("'" + String.valueOf(idNum) + "' is not a valid ID");
+					Window.alert("'" + Long.valueOf(idNum) + "' is not a valid ID");
 					newIdTextBox.selectAll();
 					return;
 				}
 				newIdTextBox.setText("");
-				if (waterFountains.contains(String.valueOf(idNum))) {
+				if (waterFountains.contains(Long.valueOf(idNum))) {
 					return;
 				}
-				addWaterFountainToFavs(idNum);					
+				
+				addWaterFountainToFavs(idNum);			
 			}
 		});
 	}

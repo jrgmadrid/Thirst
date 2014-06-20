@@ -94,7 +94,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			System.out.println("The query has executed.");
 			if(wfs != null){
 				System.out.println("WFS is not null.");
-				System.out.println(wfs.size() + " It's empty.");
+				System.out.println(wfs.size());
 				for(WaterFountain wf : wfs) {
 					results = new ArrayList<Long>();
 					results.add(wf.getId());
