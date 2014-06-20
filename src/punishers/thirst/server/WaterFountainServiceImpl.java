@@ -30,8 +30,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
-//			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 				"where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery(WaterFountain.class);
 			q.setFilter("id == idParam");
 			q.declareParameters("Long idParam");
@@ -78,7 +76,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery(WaterFountain.class);
 			q.setFilter("id == idParam");
 			q.declareParameters("Long idParam");
