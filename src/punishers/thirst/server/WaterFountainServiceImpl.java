@@ -32,6 +32,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 //			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
 					"where id == idParam " + "parameters Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
 			WaterFountain wf = (WaterFountain) q.execute(id);
 			wf.addUser(getUser());
 		} finally {
@@ -46,6 +47,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 //			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 
 					"where id == idParam " + "parameters Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
 			WaterFountain wf = (WaterFountain) q.execute(id);
 			Set<User> users = wf.getUsers();
 			for(User user : users) {
@@ -64,6 +66,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		List<String> results = new ArrayList<String>();
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
+			q.declareImports("import punishers.thirst.server.WaterFountain");
 			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
 			for(WaterFountain wf : waterFountains) {
 				Set<User> people = wf.getUsers();
@@ -88,13 +91,16 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Long> results = null;
+		int size = 0;
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
+			q.declareImports("import punishers.thirst.server.WaterFountain");
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
 			System.out.println("The query has executed.");
 			if(wfs != null){
 				System.out.println("WFS is not null.");
 				System.out.println(wfs.size());
+				size = wfs.size();
 				results = new ArrayList<Long>();
 				for(WaterFountain wf : wfs) {
 					results.add(wf.getId());
@@ -102,10 +108,11 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			} else {
 				System.out.println("There are no ids to be found.");
 			}
-			return (Long[]) results.toArray(new Long[wfs.size()]);
+			
 		} finally {
 			pm.close();
 		}
+		return (Long[]) results.toArray(new Long[size]);
 	}
 	
 	private void checkLoggedIn() throws NotLoggedInException {
