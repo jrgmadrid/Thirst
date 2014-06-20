@@ -60,7 +60,7 @@ public class Thirst implements EntryPoint {
 
 	  // loadThirst() related junk that will eventually be replaced
 	  private VerticalPanel mainPanel = new VerticalPanel();
-	  private boolean isAdmin = true;
+	  private boolean isAdmin = false;
 	  
 	  private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	  private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);

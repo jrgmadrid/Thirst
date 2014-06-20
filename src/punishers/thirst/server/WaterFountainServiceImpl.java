@@ -85,20 +85,32 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 	}
 	
 	public Long[] getAllIds() throws NotLoggedInException {
+		System.out.println("The method started correctly! But are we logged in?");
 		checkLoggedIn();
+		System.out.println("We're logged in! But will the PM start?");
 		PersistenceManager pm = getPersistenceManager();
+		System.out.println("PM Started! Let's do the try-statement stuff, shall we?");
 		ArrayList<Long> results = null;
 		try {
+			System.out.println("Query?");
 			Query q = pm.newQuery(WaterFountain.class);
+			System.out.println("Query created! Execute query?");
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-			if(!wfs.isEmpty()){
+			System.out.println("Query executed!?");
+			if(wfs != null) {
+				System.out.println("DO A THING");
+				System.out.println(wfs.size() + "YO");
 				for(WaterFountain wf : wfs) {
+					System.out.println("We got into a for-loop!!???");
 					results = new ArrayList<Long>();
+					System.out.println("YO, we have our results, but");
 					results.add(wf.getId());
+					System.out.println("did we really get the ids? I guess we did");
 				}
 			} else {
 				System.out.println("No Results.");
 			}
+			System.out.println("Wait, what");
 			return (Long[]) results.toArray();
 		} finally {
 			pm.close();
