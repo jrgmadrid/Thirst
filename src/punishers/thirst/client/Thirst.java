@@ -108,7 +108,7 @@ public class Thirst implements EntryPoint {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
 		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
 		
-		waterFountainFlexTable.setText(0, 0, "WaterFountain!");
+		waterFountainFlexTable.setText(0, 0, "WaterFountain ID");
 		
 		waterFountainFlexTable.getRowFormatter().addStyleName(0, "favoritesListHeader");
 		waterFountainFlexTable.addStyleName("favoritesList");
@@ -185,8 +185,9 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
-	private void displayFountain(final Long symbol) {
+	private void displayFountain(final long symbol) {
 	    int row = waterFountainFlexTable.getRowCount();
+
 	    waterFountains.add(symbol);
 	    waterFountainFlexTable.setText(row, 0, String.valueOf(symbol));
 
