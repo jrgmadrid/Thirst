@@ -75,7 +75,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 					}
 				}
 				else {
-					System.out.println("No Users found.");
+					System.out.println("No users found for water fountain " + wf.getId());
 				}
 			}
 		} finally {
@@ -95,14 +95,14 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			if(wfs != null){
 				System.out.println("WFS is not null.");
 				System.out.println(wfs.size());
+				results = new ArrayList<Long>();
 				for(WaterFountain wf : wfs) {
-					results = new ArrayList<Long>();
 					results.add(wf.getId());
 				}
 			} else {
 				System.out.println("There are no ids to be found.");
 			}
-			return (Long[]) results.toArray();
+			return (Long[]) results.toArray(new Long[wfs.size()]);
 		} finally {
 			pm.close();
 		}
