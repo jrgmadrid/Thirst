@@ -160,10 +160,6 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
-	private void loadMap() {
-		
-	}
-	
 	private void loadAdminControls() {
 		mainPanel.add(signOutLink);
 		mainPanel.add(updateDatabaseButton);
@@ -265,12 +261,35 @@ public class Thirst implements EntryPoint {
 		waterFountainService.getAllLatLng(new AsyncCallback<LatLng[]>() {
 			public void onFailure(Throwable error) { }
 			public void onSuccess(LatLng[] result) {
+				double lowLat = 0;
+				double highLat = 0;
+				double lowLon = 0;
+				double highLon = 0;
 				for (int i = 0; i < result.length; i++) {
 					latLngs.add(result[i]);
+					if (result[i].getLatitude() > highLat)
+						highLat = result[i].getLatitude();
+					else if (result[i].getLatitude() < lowLat)
+						lowLat = result[i].getLatitude();
+					if (result[i].getLongitude() > highLon)
+						highLon = result[i].getLongitude();
+					else if (result[i].getLongitude() < lowLon)
+						lowLon = result[i].getLongitude();
 				}
-				
+				double centerLat = (highLat + lowLat) / 2;
+				double centerLon = (highLon + lowLon) / 2;
+				LatLng center = LatLng.newInstance(centerLat, centerLon);
+				final MapWidget map = new MapWidget(center, 2);
+				map.setSize("100%","100%");
+				map.addControl(new LargeMapControl());
+				for (int i = 0; i < result.length; i++) {
+					map.addOverlay(new Marker(result[i]));
+					//TODO: Add InfoWindowContent to each Marker
+				}
+				//TODO: Actually add the map to the pane
 			}
 		});
+		
 	}
 	
 	private boolean validateId(long idNum, Long[] ids) {
