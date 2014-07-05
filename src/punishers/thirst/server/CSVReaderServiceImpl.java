@@ -19,6 +19,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @PersistenceCapable
 public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVReaderService {
+
 	/*
 	 * A set of water fountains that will be committed to the database once it is parsed
 	 */
@@ -88,7 +89,7 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 				//Makes a new water fountain with all of the information
 				WaterFountain fountain = new WaterFountain(lat, lon, location, maintainer);
 				//Sets the ID of the water fountain which will be the key for the entity in the database
-				fountain.setId();
+				//fountain.setId();
 				//Adds the water fountain to the set which will then be stored in the database
 				waterFountains.add(fountain);
 				PersistenceManager pm = getPersistenceManager();
