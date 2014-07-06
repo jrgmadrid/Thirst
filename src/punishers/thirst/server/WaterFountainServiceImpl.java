@@ -16,7 +16,6 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.google.gwt.maps.client.geom.LatLng;
 
 import punishers.thirst.client.NotLoggedInException;
 import punishers.thirst.client.WaterFountainService;
@@ -31,8 +30,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
-//			Query q = pm.newQuery("select users " + "from " + WaterFountain.class.getName() + 				"where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery(WaterFountain.class);
 			q.setFilter("id == idParam");
 			q.declareParameters("Long idParam");
@@ -49,7 +46,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		try {
-//			Query q = pm.newQuery("select from WaterFountain " + "where id == idParam " + "parameters Long idParam");
 			Query q = pm.newQuery(WaterFountain.class);
 			q.setFilter("id == idParam");
 			q.declareParameters("Long idParam");
@@ -65,6 +61,42 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		} finally {
 			pm.close();
 		}
+	}
+	
+	// adds a rating to the set of ratings for the given water fountain.  
+	public void addRating(long id, int rating) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			Set<Integer> fountainRating = wf.getRatings();
+			fountainRating.add(rating);
+		} finally {
+			pm.close();
+		}
+	}
+	
+	public int getAverageWaterFountatinRating(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		int averageRating = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			averageRating = wf.getAverageWaterFountainRating();
+		} finally {
+			pm.close();
+		}
+		return averageRating;
 	}
 
 	public Long[] getFavWaterFountains() throws NotLoggedInException {
@@ -96,10 +128,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 			Query q = pm.newQuery(WaterFountain.class);
 			q.declareImports("import punishers.thirst.server.WaterFountain");
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-			System.out.println("The query has executed.");
 			if(wfs != null){
-				System.out.println("WFS is not null.");
-				System.out.println(wfs.size());
 				size = wfs.size();
 				results = new ArrayList<Long>();
 				for(WaterFountain wf : wfs) {
@@ -115,25 +144,23 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		return (Long[]) results.toArray(new Long[size]);
 	}
 	
-	public LatLng[] getAllLatLng() throws NotLoggedInException {
+	public Double[] getAllLatAndLng() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
-		ArrayList<LatLng> results = null;
+		ArrayList<Double> results = null;
 		int size = 0;
 		try {
 			Query q = pm.newQuery(WaterFountain.class);
 			q.declareImports("import punishers.thirst.server.WaterFountain");
 			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-			System.out.println("The query has executed.");
 			if(wfs != null){
-				System.out.println("WFS is not null.");
-				System.out.println(wfs.size());
 				size = wfs.size();
-				results = new ArrayList<LatLng>();
+				results = new ArrayList<Double>();
 				for(WaterFountain wf : wfs) {
 					double lat = wf.getLatitude();
-					double lon = wf.getLongitude();
-					results.add(LatLng.newInstance(lat, lon));
+					double lng = wf.getLongitude();
+					results.add(lat);
+					results.add(lng);
 				}
 			} else {
 				System.out.println("There are no ids to be found.");
@@ -142,7 +169,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		} finally {
 			pm.close();
 		}
-		return (LatLng[]) results.toArray(new LatLng[size]);
+		return (Double[]) results.toArray(new Double[size]);
 	}
 	
 	private void checkLoggedIn() throws NotLoggedInException {

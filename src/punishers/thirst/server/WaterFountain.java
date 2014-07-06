@@ -31,6 +31,9 @@ public class WaterFountain {
 	@Persistent
 	private Set<User> users;
 	
+	@Persistent
+	private Set<Integer> ratings;
+	
 	/*
 	 * Constructor for the Water Fountain for all of its information
 	 * Takes latitude, longitude, location, and maintainer as parameters
@@ -42,6 +45,7 @@ public class WaterFountain {
 		this.location = location;
 		this.maintainer = maintainer;
 		this.users = new HashSet<User>();
+		this.ratings = new HashSet<Integer>();
 	}
 	
 	/*
@@ -54,6 +58,26 @@ public class WaterFountain {
 //		else
 //			this.id = temp;
 //	}
+	
+	public Set<Integer> getRatings() {
+		return this.ratings;
+	}
+	
+	public int getAverageWaterFountainRating() {
+		int total = 0;
+		int count = 0;
+		
+		if(ratings.isEmpty()){
+			return -1;
+		}
+		else {
+			for(Integer rating : ratings) {
+				total += rating;
+				count++;
+			}
+		}
+		return total/count;
+	}
 	
 	/*
 	 * Adds a user to the set of users associated with the water fountain
