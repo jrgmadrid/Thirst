@@ -217,6 +217,7 @@ public class Thirst implements EntryPoint {
 			}
 			public void onSuccess(Long[] symbols) {
 				displayFountains(symbols);
+//				displayRatings(symbols);
 			}
 		});
 	}
@@ -224,14 +225,20 @@ public class Thirst implements EntryPoint {
 	private void displayFountains(Long [] symbols) {
 		for (Long symbol : symbols) {
 			displayFountain(symbol);
-			displayRating(symbol);
 		}
 	}
+	
+//	private void displayRatings(Long[] symbols) {
+//		for(Long symbol : symbols) {
+//			displayRating(symbol);
+//		}
+//	}
 
 	private void displayFountain(final Long symbol) {
 		int row = waterFountainFlexTable.getRowCount();
 		waterFountains.add(symbol);
 		waterFountainFlexTable.setText(row, 0, String.valueOf(symbol));
+		displayRating(symbol, row);
 
 		Button removeWaterFountainButton = new Button("Remove Fountain");
 		removeWaterFountainButton.addClickHandler(new ClickHandler() {
@@ -312,19 +319,19 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	private void displayRating(long idNum) {
+	private void displayRating(long idNum, final int place) {
 		waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Integer rating) {
-				int row = waterFountainFlexTable.getRowCount();
-				if(rating == -1) {
-					waterFountainFlexTable.setText(row-1, 1, "Be the first to rate this fountain");
-					waterFountainFlexTable.setWidget(row-1, 2, addRatingButton);
-				} else {
-					waterFountainFlexTable.setText(row-1, 1, String.valueOf(rating));
-				}
+				int row = place;
+					if(rating == -1) {
+						waterFountainFlexTable.setText(row, 1, "Be the first to rate this fountain");
+						waterFountainFlexTable.setWidget(row, 2, addRatingButton);
+					} else {
+						waterFountainFlexTable.setText(row, 1, String.valueOf(rating));
+					}
 			}
 		});
 	}
@@ -390,6 +397,7 @@ public class Thirst implements EntryPoint {
 			}
 			public void onSuccess(Void ignore) {
 				displayFountain(id);
+//				displayRating(id);
 			}
 		});
 	}
