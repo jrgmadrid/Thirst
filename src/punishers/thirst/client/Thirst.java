@@ -158,7 +158,14 @@ public class Thirst implements EntryPoint {
 			RootPanel.get("logged_in").add(mainPanel);
 			updateDatabaseButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-					updateDatabase();
+					waterFountainService.deleteAllFountains(new AsyncCallback<Void>() {
+						public void onFailure(Throwable error) {
+							handleError(error);
+						}
+						public void onSuccess(Void ignore) {
+							updateDatabase();
+						}
+					});
 				}
 			});
 		}
