@@ -14,12 +14,17 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.maps.client.InfoWindow;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
+import com.google.gwt.maps.client.event.MarkerClickHandler;
+import com.google.gwt.maps.client.event.MarkerInfoWindowOpenHandler;
 import com.google.gwt.maps.client.geom.LatLng;
+import com.google.gwt.maps.client.impl.InfoWindowOptionsImpl;
 import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.dom.client.Style.Unit;
 
 import punishers.thirst.client.LoginInfo;
@@ -42,6 +47,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -142,17 +148,16 @@ public class Thirst implements EntryPoint {
 		{
 			loadWaterFountains();
 
-
-
 			waterFountainFlexTable.setCellPadding(12);
 
 			mainPanel.add(waterFountainFlexTable);
 			mainPanel.add(addPanel);
+			mainPanel.add(ratingTextBox);
 			mainPanel.add(signOutLink);
 
 			RootPanel.get("logged_in").add(mainPanel);
 
-			ratingTextBox.setFocus(true);
+			newIdTextBox.setFocus(true);
 
 			addRatingButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
@@ -181,8 +186,6 @@ public class Thirst implements EntryPoint {
 					}
 				}
 			});
-
-
 		}
 		else {
 			loadAdminControls();
@@ -210,7 +213,7 @@ public class Thirst implements EntryPoint {
 	private void loadWaterFountains() {
 		waterFountainService.getFavWaterFountains(new AsyncCallback<Long[]>() {
 			public void onFailure(Throwable error) {
-				Window.alert("yo");
+				
 			}
 			public void onSuccess(Long[] symbols) {
 				displayFountains(symbols);
@@ -285,12 +288,17 @@ public class Thirst implements EntryPoint {
 	private void addRating() {
 		final int rating = Integer.valueOf(ratingTextBox.getText().trim());
 		ratingTextBox.setFocus(true);
+		
+		final long idNum = Long.valueOf(newIdTextBox.getText().trim());
+		newIdTextBox.setFocus(true);
 
 		if(rating < 0 || rating > 7) {
 			Window.alert("Please enter a number between 0 and 7");
 			ratingTextBox.selectAll();
 			return;
 		}
+		
+		addRatingToWaterFountain(idNum, rating);
 	}
 
 	public void addRatingToWaterFountain(final long idNum, final int rating) {
@@ -304,7 +312,6 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	// getAverageRating, display it in a nice way
 	private void displayRating(long idNum) {
 		waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
 			public void onFailure(Throwable error) {
@@ -330,7 +337,7 @@ public class Thirst implements EntryPoint {
 		final ArrayList<LatLng> latlngs = new ArrayList<LatLng>();
 		waterFountainService.getAllLatAndLng(new AsyncCallback<Double[]>() {
 			public void onFailure(Throwable caught) {
-//				Window.alert("Lats and longs are not loading");
+
 			}
 			@Override
 			public void onSuccess(Double[] result) {
@@ -351,7 +358,15 @@ public class Thirst implements EntryPoint {
 	    map.setSize("100%", "100%");
 	    map.addControl(new LargeMapControl());
 		for(LatLng latlng : latlngs) {
-			map.addOverlay(new Marker(latlng));
+			Marker marker = new Marker(latlng);
+			marker.addMarkerClickHandler(new MarkerClickHandler () {
+				@Override
+				public void onClick(MarkerClickEvent event) {
+					Window.alert("I hope this works");
+				}
+			});
+			
+			map.addOverlay(marker);
 		}
 	    final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 	    dock.addNorth(map, 600);
