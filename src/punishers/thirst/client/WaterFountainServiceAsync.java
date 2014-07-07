@@ -1,19 +1,28 @@
 package punishers.thirst.client;
 
-import java.util.Set;
 
+import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface WaterFountainServiceAsync {
 	
+<<<<<<< HEAD
 	void addWaterFountainToFavs(long id, AsyncCallback<Void> async);
 	
 	void removeWaterFountainFromFavs(int id, AsyncCallback<Void> async);
+=======
+	public void addWaterFountainToFavs(long id, AsyncCallback<Void> async);
 	
-	public void getFavWaterFountains(AsyncCallback<String[]> async);
+	public void removeWaterFountainFromFavs(long id, AsyncCallback<Void> async);
+>>>>>>> master
+	
+	public void addRating(long id, int rating, AsyncCallback<Void> async);
+	
+	public void getAverageWaterFountatinRating(long id, AsyncCallback<Integer> callback);
+	
+	public void getFavWaterFountains(AsyncCallback<Long[]> asyncCallback);
 
-	public void getAllIds(AsyncCallback<Set<Integer>> callback);
-
+<<<<<<< HEAD
 	void deleteAllFountains(AsyncCallback<Void> callback);
 
 	void getLatLon(long id, AsyncCallback<String> callback);
@@ -24,4 +33,9 @@ public interface WaterFountainServiceAsync {
 
 	void getSingleLocation(long id, AsyncCallback<String> callback);
 
+=======
+	public void getAllIds(AsyncCallback<Long[]> callback);
+	
+	public void getAllLatAndLngAndId(AsyncCallback<Double[]> callback);
+>>>>>>> master
 }

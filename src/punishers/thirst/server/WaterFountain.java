@@ -26,10 +26,13 @@ public class WaterFountain {
 	
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private long id;
+	private Long id;
 	
 	@Persistent
 	private Set<User> users;
+	
+	@Persistent
+	private Set<Integer> ratings;
 	
 	/*
 	 * Constructor for the Water Fountain for all of its information
@@ -42,17 +45,38 @@ public class WaterFountain {
 		this.location = location;
 		this.maintainer = maintainer;
 		this.users = new HashSet<User>();
+		this.ratings = new HashSet<Integer>();
 	}
 	
 	/*
 	 * Sets the Id of the water fountain (done during the parsing process
 	 */
-	public void setId() {
-		long temp = Long.valueOf(hashCode());
-		if (temp < 0)
-			this.id = temp * -1;
-		else
-			this.id = temp;
+//	public void setId() {
+//		long temp = Long.valueOf(hashCode());
+//		if (temp < 0)
+//			this.id = temp * -1;
+//		else
+//			this.id = temp;
+//	}
+	
+	public Set<Integer> getRatings() {
+		return this.ratings;
+	}
+	
+	public int getAverageWaterFountainRating() {
+		int total = 0;
+		int count = 0;
+		
+		if(ratings.isEmpty()){
+			return -1;
+		}
+		else {
+			for(Integer rating : ratings) {
+				total += rating;
+				count++;
+			}
+		}
+		return total/count;
 	}
 	
 	/*
