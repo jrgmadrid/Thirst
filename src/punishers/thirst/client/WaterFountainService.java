@@ -21,5 +21,5 @@ public interface WaterFountainService extends RemoteService {
 	
 	public Long[] getAllIds() throws NotLoggedInException;
 	
-	public Double[] getAllLatAndLng() throws NotLoggedInException;
+	public Double[] getAllLatAndLngAndId() throws NotLoggedInException;
 }

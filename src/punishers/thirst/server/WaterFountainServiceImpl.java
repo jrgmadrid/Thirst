@@ -63,7 +63,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
-	// adds a rating to the set of ratings for the given water fountain.  
 	public void addRating(long id, int rating) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
@@ -144,7 +143,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		return (Long[]) results.toArray(new Long[size]);
 	}
 	
-	public Double[] getAllLatAndLng() throws NotLoggedInException {
+	public Double[] getAllLatAndLngAndId() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
 		ArrayList<Double> results = null;
@@ -159,8 +158,11 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 				for(WaterFountain wf : wfs) {
 					double lat = wf.getLatitude();
 					double lng = wf.getLongitude();
+					long longId = wf.getId();
+					double doubleId = (double) longId;
 					results.add(lat);
 					results.add(lng);
+					results.add(doubleId);
 				}
 			} else {
 				System.out.println("There are no ids to be found.");

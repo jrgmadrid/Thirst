@@ -18,5 +18,5 @@ public interface WaterFountainServiceAsync {
 
 	public void getAllIds(AsyncCallback<Long[]> callback);
 	
-	public void getAllLatAndLng(AsyncCallback<Double[]> callback);
+	public void getAllLatAndLngAndId(AsyncCallback<Double[]> callback);
 }

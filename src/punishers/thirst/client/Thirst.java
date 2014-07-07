@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.maps.client.InfoWindow;
+import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapOptions;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
@@ -342,39 +343,52 @@ public class Thirst implements EntryPoint {
 
 	private void getLatitudesAndLongitudes() {
 		final ArrayList<LatLng> latlngs = new ArrayList<LatLng>();
-		waterFountainService.getAllLatAndLng(new AsyncCallback<Double[]>() {
+		final ArrayList<Double> ids = new ArrayList<Double>();
+		waterFountainService.getAllLatAndLngAndId(new AsyncCallback<Double[]>() {
 			public void onFailure(Throwable caught) {
 
 			}
 			@Override
 			public void onSuccess(Double[] result) {
-				for(int i = 0; i < result.length; i+=2){
+				for(int i = 0; i < result.length; i+=3){
 					double lat = result[i];
 					double lon = result[i+1];
+					double id = result[i+2];
 					LatLng temp = LatLng.newInstance(lat, lon);
 					latlngs.add(temp);
+					ids.add(id);
 				}
-				displayMap(latlngs);
+				displayMap(latlngs, ids);
 			}
 		});
 	}
-	
-	protected void displayMap(ArrayList<LatLng> latlngs) {
+
+	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
+		Marker[] markers = new Marker[latlngs.size()];
+		final InfoWindowContent[] infoWindows = new InfoWindowContent[latlngs.size()];
 		LatLng center = LatLng.newInstance(49.26, -123.1);
 	    final MapWidget map = new MapWidget(center, 12);
 	    map.setSize("100%", "100%");
 	    map.addControl(new LargeMapControl());
-		for(LatLng latlng : latlngs) {
-			Marker marker = new Marker(latlng);
-			marker.addMarkerClickHandler(new MarkerClickHandler () {
-				@Override
-				public void onClick(MarkerClickEvent event) {
-					Window.alert("I hope this works");
-				}
-			});
-			
-			map.addOverlay(marker);
-		}
+	    for(int i = 0; i < latlngs.size(); i++) {
+	    	Marker temp = new Marker(latlngs.get(i));
+	    	markers[i] = temp;
+	    }
+	    for(int i = 0; i < ids.size(); i++) {
+			InfoWindowContent infContent = new InfoWindowContent(String.valueOf(ids.get(i)));
+			infoWindows[i] = infContent;
+	    }
+	    for(int i = 0; i < latlngs.size(); i++) {
+	    	final Marker temp = markers[i];
+	    	final int position = i;
+	    	temp.addMarkerClickHandler(new MarkerClickHandler() {
+	    		public void onClick(MarkerClickEvent event) {
+	    			map.getInfoWindow().open(temp, infoWindows[position]);
+	    		}
+	    	});
+			map.addOverlay(temp);
+	    }
+
 	    final DockLayoutPanel dock = new DockLayoutPanel(Unit.PX);
 	    dock.addNorth(map, 600);
 	    RootPanel.get("map").add(dock);
