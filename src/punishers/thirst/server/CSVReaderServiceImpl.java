@@ -10,6 +10,7 @@ import java.util.*;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jdo.Query;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 
@@ -29,10 +30,19 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 	private static final PersistenceManagerFactory PMF = JDOHelper.getPersistenceManagerFactory("transactions-optional");
 	
 	/*
-	 * Water fountain set getter
+	 * Get water fountains in the datastore
 	 */
-	public Set<WaterFountain> getWaterFountains() {
-		return waterFountains;
+	public Set<WaterFountain> getAllWaterFountains() {
+		PersistenceManager pm = getPersistenceManager();
+		Set<WaterFountain> wfs = new HashSet<WaterFountain>();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			wfs = (Set<WaterFountain>) q.execute();
+		} finally {
+			pm.close();
+		}
+		return wfs;
 	}
 	
 	public WaterFountain retrieveFromSet(int id) {
@@ -70,6 +80,8 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 			 */
 			String firstLine = csvFile.readLine();
 			
+			Set<WaterFountain> fountains = new HashSet<WaterFountain>();
+			fountains = getAllWaterFountains();
 			//Parses the rest of the file line by line
 			while ((line = csvFile.readLine()) != null) {
 				double lat;
@@ -92,17 +104,19 @@ public class CSVReaderServiceImpl extends RemoteServiceServlet implements CSVRea
 				//fountain.setId();
 				//Adds the water fountain to the set which will then be stored in the database
 				waterFountains.add(fountain);
-				PersistenceManager pm = getPersistenceManager();
-				try {
-					pm.makePersistent(fountain);
-				} finally {
-					pm.close();
+				
+				if (!fountains.contains(fountain)) {
+					PersistenceManager pm = getPersistenceManager();
+					try {
+						pm.makePersistent(fountain);
+					} finally {
+						pm.close();
+					}
 				}
 			}
 				
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -34,6 +34,9 @@ public class WaterFountain {
 	@Persistent
 	private Set<Integer> ratings;
 	
+	@Persistent
+	private Set<Photo> photos;
+	
 	/*
 	 * Constructor for the Water Fountain for all of its information
 	 * Takes latitude, longitude, location, and maintainer as parameters
@@ -46,6 +49,7 @@ public class WaterFountain {
 		this.maintainer = maintainer;
 		this.users = new HashSet<User>();
 		this.ratings = new HashSet<Integer>();
+		this.photos = new HashSet<Photo>();
 	}
 	
 	/*
@@ -84,6 +88,10 @@ public class WaterFountain {
 	 */
 	public void addUser(User u) {
 		users.add(u);
+	}
+	
+	public void addPhoto(Photo p) {
+		photos.add(p);
 	}
 	
 	
@@ -127,6 +135,10 @@ public class WaterFountain {
 	 */
 	public String getMaintainer() {
 		return this.maintainer;
+	}
+	
+	public Set<Photo> getPhotos() {
+		return photos;
 	}
 	
 	/*

@@ -92,6 +92,7 @@ public class Thirst implements EntryPoint {
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		// put upload photo field here in flex table to see if it works for the time being
 	
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(), new AsyncCallback<LoginInfo>() {
@@ -176,16 +177,6 @@ public class Thirst implements EntryPoint {
 
 			addWaterFountainButton.addClickHandler(new ClickHandler() {
 				public void onClick(ClickEvent event) {
-<<<<<<< HEAD
-					waterFountainService.deleteAllFountains(new AsyncCallback<Void>() {
-						public void onFailure(Throwable error) {
-							handleError(error);
-						}
-						public void onSuccess(Void ignore) {
-							updateDatabase();
-						}
-					});
-=======
 					addWaterFountain();
 				}
 			});
@@ -195,7 +186,6 @@ public class Thirst implements EntryPoint {
 					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 						addWaterFountain();
 					}
->>>>>>> master
 				}
 			});
 		}
