@@ -3,7 +3,6 @@ package punishers.thirst.server;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
@@ -14,7 +13,6 @@ import javax.jdo.Query;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import punishers.thirst.client.NotLoggedInException;
@@ -117,6 +115,29 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 		return (Long[]) results.toArray(new Long[results.size()]);
 	}
+	
+//	public Double[] getFavWaterFountainsLatLng() throws NotLoggedInException {
+//		checkLoggedIn();
+//		PersistenceManager pm = getPersistenceManager();
+//		List<Double> results = new ArrayList<Double>();
+//		try {
+//			Query q = pm.newQuery(WaterFountain.class);
+//			q.declareImports("import punishers.thirst.server.WaterFountain");
+//			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
+//			for(WaterFountain wf : waterFountains) {
+//				Set<User> people = wf.getUsers();
+//				if(people.contains(getUser())) {
+//					double lat = wf.getLatitude();
+//					double lng = wf.getLongitude();
+//					results.add(lat);
+//					results.add(lng);
+//				}
+//			}
+//		} finally {
+//			pm.close();
+//		}
+//		return (Double[]) results.toArray(new Double[results.size()]);
+//	}
 	
 	public Long[] getAllIds() throws NotLoggedInException {
 		checkLoggedIn();

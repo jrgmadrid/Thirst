@@ -1,7 +1,5 @@
 package punishers.thirst.client;
 
-
-import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface WaterFountainServiceAsync {
@@ -19,4 +17,6 @@ public interface WaterFountainServiceAsync {
 	public void getAllIds(AsyncCallback<Long[]> callback);
 	
 	public void getAllLatAndLngAndId(AsyncCallback<Double[]> callback);
+	
+//	public void getFavWaterFountainsLatLng(AsyncCallback<Double[]> callback);
 }
