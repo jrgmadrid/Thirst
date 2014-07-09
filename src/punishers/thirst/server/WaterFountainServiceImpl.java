@@ -78,6 +78,83 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
+	public String getLocationString(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		String result = "";
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getLocation();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public String getMaintainerString(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		String result = "";
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getMaintainer();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public int getNumberOfUsers(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		int result = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getNumberOfUsers();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public Double[] getLatAndLong(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		ArrayList<Double> results = null;
+		int size = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			results = new ArrayList<Double>();
+			double lat = wf.getLatitude();
+			double lng = wf.getLongitude();
+			results.add(lat);
+			results.add(lng);
+		} finally {
+			pm.close();
+		}
+		return (Double[]) results.toArray(new Double[2]);
+	}
+	
 	public int getAverageWaterFountatinRating(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		int averageRating = 0;

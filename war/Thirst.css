@@ -10,20 +10,6 @@ h1 {
   text-align: center;
 }
 
-/* stock list header row */
-.favoritesListHeader {
-  background-color: #2062B8;
-  color: white;
-  font-style: italic;
-}
-
-/* stock list flex table */
-.favoritesList {
-  border: 1px solid silver;
-  padding: 2px;
-  margin-bottom:6px;
-}
-
 .addPanel {
   margin: 10px 0px 15px 0px;
 }
