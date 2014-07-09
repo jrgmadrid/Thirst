@@ -578,7 +578,7 @@ public class Thirst implements EntryPoint {
 	}
 
 	private void handleError(Throwable error) {
-		Window.alert("an async call is failing");
+//		Window.alert("an async call is failing");
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}
