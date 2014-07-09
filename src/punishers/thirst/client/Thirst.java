@@ -68,7 +68,7 @@ public class Thirst implements EntryPoint {
 	private ScrollPanel favoritesScrollPanel = new ScrollPanel();
 	
 	// add a favorite
-	private HorizontalPanel addPanel = new HorizontalPanel();  
+	private VerticalPanel addPanel = new VerticalPanel();  
 	private TextBox newIdTextBox = new TextBox();  
 	private Button addWaterFountainButton = new Button("Add");
 
@@ -86,6 +86,7 @@ public class Thirst implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
+	// TODO make page seen before sign in more appealing
 	public void onModuleLoad() {
 	
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
@@ -115,20 +116,15 @@ public class Thirst implements EntryPoint {
 	}
 
 	private void loadThirst() {
-		
 		Maps.loadMapsApi("AIzaSyC_LHn5yTElbMwbynIbKT9k7YjIDNj9GQY", "2", false, new Runnable() {
 			public void run() {
 				prepareMap();
 			}
 		});
-
-		if (!loginInfo.getIsAdmin())
-		{
+		if (!loginInfo.getIsAdmin()) {
 			loadWaterFountains();
 			loadFavoriteWaterFountains();
-			
 			loadUI();
-
 		}
 		else {
 			loadAdminControls();
@@ -187,6 +183,8 @@ public class Thirst implements EntryPoint {
 	}
 	
 	private void createAddPanel() {
+		Label addLabel = new Label("to add a water fountain to your favorites list enter the ID number into the text box.");
+		addPanel.add(addLabel);
 		addPanel.add(newIdTextBox);
 		addPanel.add(addWaterFountainButton);
 		addPanel.addStyleName("addPanel");
@@ -286,7 +284,7 @@ public class Thirst implements EntryPoint {
 				handleError(caught);
 			}
 			public void onSuccess(Double[] result) {
-				flexTable.setText(row, 2, String.valueOf(result[0]) + " " + String.valueOf(result[1]));
+				flexTable.setText(row, 2, String.valueOf(result[0]) + " , " + String.valueOf(result[1]));
 			}
 		});
 	}
@@ -408,8 +406,7 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	// TODO create another flextable to store the ratings
-	// so that if there are less than 10, all ten appear
+	// TODO create another flextable to store the ratings so that if there are less than 10, all ten appear
 	private void displayRating(long idNum, final int place, final FlexTable flexTable) {
 		waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
 			public void onFailure(Throwable error) {
