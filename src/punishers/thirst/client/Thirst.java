@@ -15,10 +15,7 @@ import com.google.gwt.maps.client.Maps;
 import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
-import com.google.gwt.maps.client.geom.Size;
-import com.google.gwt.maps.client.overlay.Icon;
 import com.google.gwt.maps.client.overlay.Marker;
-import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.dom.client.Style.Unit;
 
 import punishers.thirst.client.LoginInfo;
@@ -30,15 +27,13 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
-import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -52,36 +47,39 @@ public class Thirst implements EntryPoint {
 	private VerticalPanel loginPanel = new VerticalPanel();
 	private Label loginLabel = new Label("Sign in with a Google Account to quench your Thirst.");
 	private Anchor signInLink = new Anchor("Sign In with Google");
-	private Anchor signOutLink = new Anchor("Sign Out");
 	
-	private Button updateDatabaseButton = new Button("Update Database");
 	private ArrayList<Long> waterFountains = new ArrayList<Long>();
-
-	private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
-
-	private DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 	
+	// admin
 	private HorizontalPanel adminPanel = new HorizontalPanel();
-	private boolean isAdmin = false;
+	private Button updateDatabaseButton = new Button("Update Database");
 
 	private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
 	
+	// table of all data
 	private FlexTable waterFountainFlexTable = new FlexTable();
-	private FlexTable favoritesFlexTable = new FlexTable();
+	private ScrollPanel waterFountainScrollPanel = new ScrollPanel();
 	
+	// table of favorites
+	private FlexTable favoritesFlexTable = new FlexTable();
+	private ScrollPanel favoritesScrollPanel = new ScrollPanel();
+	
+	// add a favorite
 	private HorizontalPanel addPanel = new HorizontalPanel();  
 	private TextBox newIdTextBox = new TextBox();  
 	private Button addWaterFountainButton = new Button("Add");
 
+	// main layout container
+	private DockLayoutPanel mainPanel = new DockLayoutPanel(Unit.PX);
 	private Label welcomeLabel;
+	private TabLayoutPanel mapAndFlexTablePanel = new TabLayoutPanel(30, Unit.PX);
+	private Anchor signOutLink = new Anchor("Sign Out");
 	
+	// rate a water fountain, located inside infowindow
 	private VerticalPanel ratingPanel = new VerticalPanel();
-
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
-	
-	TabLayoutPanel mapAndFlexTablePanel = new TabLayoutPanel(30, Unit.PX);
 	
 	/**
 	 * This is the entry point method.
@@ -110,12 +108,7 @@ public class Thirst implements EntryPoint {
 		signInLink.setHref(loginInfo.getLoginUrl());
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
-		toggleAdmin.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				isAdmin = ((CheckBox) event.getSource()).getValue();
-			}
-		});
-		loginPanel.add(toggleAdmin);
+
 		RootPanel.get("thirstList").add(loginPanel);
 	}
 
@@ -147,27 +140,20 @@ public class Thirst implements EntryPoint {
 		HorizontalPanel welcomePanel = new HorizontalPanel();
 		welcomePanel.add(welcomeLabel);
 		welcomePanel.add(signOutLink);
-
-		waterFountainFlexTable.setText(0, 0, "WaterFountainId");
-		waterFountainFlexTable.setText(0, 1, "Rating");
 		
-		favoritesFlexTable.setText(0, 0, "WaterFountainId");
-		favoritesFlexTable.setText(0, 1, "Rating");
-
 		addPanel.add(newIdTextBox);
 		addPanel.add(addWaterFountainButton);
 		addPanel.addStyleName("addPanel");
 		
-		mapAndFlexTablePanel.add(favoritesFlexTable, "Favorites");
-		mapAndFlexTablePanel.add(waterFountainFlexTable, "All");
-//		mapAndFlexTablePanel.add(map, "Map View");
+		createWaterFountainTab();
 		
-		waterFountainFlexTable.setCellPadding(10);
-		favoritesFlexTable.setCellPadding(10);
+		createFavoritesTab();
+		
+		createMapAndWaterFountainFlexTable();
 		
 		mainPanel.addNorth(welcomePanel, 55);
-		mainPanel.addSouth(addPanel, 220);
-		mainPanel.addWest(ratingPanel, 220);
+		mainPanel.addSouth(signOutLink, 25);
+		mainPanel.addWest(addPanel, 220);
 		mainPanel.add(mapAndFlexTablePanel);
 
 		RootLayoutPanel.get().add(mainPanel);
@@ -198,6 +184,25 @@ public class Thirst implements EntryPoint {
 				}
 			}
 		});
+	}
+	
+	private void createWaterFountainTab() {
+		waterFountainFlexTable.setText(0, 0, "WaterFountainId");
+		waterFountainFlexTable.setText(0, 1, "Rating");
+		waterFountainFlexTable.setCellPadding(10);
+		waterFountainScrollPanel.add(waterFountainFlexTable);
+	}
+	
+	private void createFavoritesTab() {
+		favoritesFlexTable.setText(0, 0, "WaterFountainId");
+		favoritesFlexTable.setText(0, 1, "Rating");
+		favoritesFlexTable.setCellPadding(10);
+		favoritesScrollPanel.add(favoritesFlexTable);
+	}
+	
+	private void createMapAndWaterFountainFlexTable() {
+		mapAndFlexTablePanel.add(favoritesScrollPanel, "Favorites");
+		mapAndFlexTablePanel.add(waterFountainScrollPanel, "All");
 	}
 	
 	private void loadAdminControls() {
@@ -247,7 +252,7 @@ public class Thirst implements EntryPoint {
 		}
 	}
 
-	private void displayFountains(Long [] symbols) {
+	private void displayFountains(Long[] symbols) {
 		for (Long symbol : symbols) {
 			displayFountain(symbol);
 		}
@@ -311,7 +316,6 @@ public class Thirst implements EntryPoint {
 				if (waterFountains.contains(Long.valueOf(idNum))) {
 					return;
 				}
-
 				addWaterFountainToFavs(idNum);			
 			}
 		});
@@ -329,11 +333,10 @@ public class Thirst implements EntryPoint {
 			ratingTextBox.selectAll();
 			return;
 		}
-		
 		addRatingToWaterFountain(idNum, rating);
 	}
 
-	public void addRatingToWaterFountain(final long idNum, final int rating) {
+	private void addRatingToWaterFountain(final long idNum, final int rating) {
 		waterFountainService.addRating(idNum, rating, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -351,12 +354,12 @@ public class Thirst implements EntryPoint {
 			}
 			public void onSuccess(Integer rating) {
 				int row = place;
-					if(rating == -1) {
-						waterFountainFlexTable.setText(row, 1, "Be the first to rate this fountain");
-						waterFountainFlexTable.setWidget(row, 2, addRatingButton);
-					} else {
-						waterFountainFlexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
-					}
+				if(rating == -1) {
+					waterFountainFlexTable.setText(row, 1, "Be the first to rate this fountain");
+					waterFountainFlexTable.setWidget(row, 2, addRatingButton);
+				} else {
+					waterFountainFlexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
+				}
 			}
 		});
 	}
@@ -390,11 +393,10 @@ public class Thirst implements EntryPoint {
 	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
 		
 		Marker[] markers = new Marker[latlngs.size()];
-		
 		final InfoWindowContent[] infoWindows = new InfoWindowContent[latlngs.size()];
 		
 		LatLng center = LatLng.newInstance(49.26, -123.1);
-	    final MapWidget map = new MapWidget(center, 11);
+	    final MapWidget map = new MapWidget(center, 12);
 
 	    map.setSize("100%", "100%");
 	    map.addControl(new LargeMapControl());
@@ -404,16 +406,13 @@ public class Thirst implements EntryPoint {
 			markers[i] = temp;
 	    }
 	    
-//		private HorizontalPanel addPanel = new HorizontalPanel();  
-//		private TextBox newIdTextBox = new TextBox();  
-//		private Button addWaterFountainButton = new Button("Add");
-	    
-	    // add textbox to infowindow content to make rating system work
+	    // TODO: add Id, number of favorites, fbook and twitter to infowindow
 	    for(int i = 0; i < ids.size(); i++) {
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
+//			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
+//			ratingPanel.add(idString);
 	    	InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
-//			InfoWindowContent infContent = new InfoWindowContent("WaterFountain Id: " + String.valueOf(ids.get(i)));
 			infoWindows[i] = infContent;
 	    }
 	    
@@ -430,24 +429,6 @@ public class Thirst implements EntryPoint {
 	    
 	    mapAndFlexTablePanel.add(map, "Map View");
 	}
-	
-//	private ArrayList<LatLng> getFavoriteLatLngs() {
-//		final ArrayList<LatLng> latlngs = new ArrayList<LatLng>();
-//		waterFountainService.getFavWaterFountainsLatLng(new AsyncCallback<Double[]>() {
-//			public void onFailure(Throwable caught) {
-//				handleError(caught);
-//			}
-//			public void onSuccess(Double[] result) {
-//				for(int i = 0; i < result.length; i++) {
-//					double lat = result[i];
-//					double lon = result[i+1];
-//					LatLng temp = LatLng.newInstance(lat, lon);
-//					latlngs.add(temp);
-//				}
-//			}
-//		});
-//		return latlngs;
-//	}
 	
 	private boolean validateId(long idNum, Long[] ids) {
 		boolean result = false;
