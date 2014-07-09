@@ -21,5 +21,13 @@ public interface WaterFountainService extends RemoteService {
 	
 	public Double[] getAllLatAndLngAndId() throws NotLoggedInException;
 	
+	public String getLocationString(long id) throws NotLoggedInException;
+	
+	public String getMaintainerString(long id) throws NotLoggedInException;
+	
+	public int getNumberOfUsers(long id) throws NotLoggedInException;
+	
+	public Double[] getLatAndLong(long id) throws NotLoggedInException;
+	
 //	public Double[] getFavWaterFountainsLatLng() throws NotLoggedInException;
 }

@@ -53,6 +53,8 @@ public class Thirst implements EntryPoint {
 	// admin
 	private HorizontalPanel adminPanel = new HorizontalPanel();
 	private Button updateDatabaseButton = new Button("Update Database");
+	
+	private HorizontalPanel welcomePanel = new HorizontalPanel();
 
 	private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);
@@ -135,15 +137,10 @@ public class Thirst implements EntryPoint {
 	
 	private void loadUI() {
 		signOutLink.setHref(loginInfo.getLogoutUrl());
-		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
 		
-		HorizontalPanel welcomePanel = new HorizontalPanel();
-		welcomePanel.add(welcomeLabel);
-		welcomePanel.add(signOutLink);
+		createWelcomePanel();
 		
-		addPanel.add(newIdTextBox);
-		addPanel.add(addWaterFountainButton);
-		addPanel.addStyleName("addPanel");
+		createAddPanel();
 		
 		createWaterFountainTab();
 		
@@ -157,8 +154,6 @@ public class Thirst implements EntryPoint {
 		mainPanel.add(mapAndFlexTablePanel);
 
 		RootLayoutPanel.get().add(mainPanel);
-
-		newIdTextBox.setFocus(true);
 
 		addRatingButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
@@ -186,9 +181,25 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
+	private void createWelcomePanel() {
+		welcomeLabel = new Label("Welcome, " + loginInfo.getNickname());
+		welcomePanel.add(welcomeLabel);
+	}
+	
+	private void createAddPanel() {
+		addPanel.add(newIdTextBox);
+		addPanel.add(addWaterFountainButton);
+		addPanel.addStyleName("addPanel");
+		newIdTextBox.setFocus(true);
+	}
+	
 	private void createWaterFountainTab() {
 		waterFountainFlexTable.setText(0, 0, "WaterFountainId");
 		waterFountainFlexTable.setText(0, 1, "Rating");
+		waterFountainFlexTable.setText(0, 2, "Lat and Long");
+		waterFountainFlexTable.setText(0, 3, "Location");
+		waterFountainFlexTable.setText(0, 4, "Maintainer");
+		waterFountainFlexTable.setText(0, 5, "Number of People who like this Fountain");
 		waterFountainFlexTable.setCellPadding(10);
 		waterFountainScrollPanel.add(waterFountainFlexTable);
 	}
@@ -196,6 +207,10 @@ public class Thirst implements EntryPoint {
 	private void createFavoritesTab() {
 		favoritesFlexTable.setText(0, 0, "WaterFountainId");
 		favoritesFlexTable.setText(0, 1, "Rating");
+		favoritesFlexTable.setText(0, 2, "Lat and Long");
+		favoritesFlexTable.setText(0, 3, "Location");
+		favoritesFlexTable.setText(0, 4, "Maintainer");
+		favoritesFlexTable.setText(0, 5, "Number of People who like this Fountain");
 		favoritesFlexTable.setCellPadding(10);
 		favoritesScrollPanel.add(favoritesFlexTable);
 	}
@@ -230,7 +245,7 @@ public class Thirst implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Long[] symbols) {
-				displayFavorites(symbols);
+				displayFountains(symbols, favoritesFlexTable);
 			}
 		});
 	}
@@ -241,28 +256,80 @@ public class Thirst implements EntryPoint {
 				
 			}
 			public void onSuccess(Long[] symbols) {
-				displayFountains(symbols);
+				displayFountains(symbols, waterFountainFlexTable);
 			}
 		});
 	}
 	
-	private void displayFavorites(Long[] symbols) {
-		for(Long symbol : symbols) {
-			displayFavorite(symbol);
+	private void displayFountains(Long[] symbols, FlexTable flexTable) {
+		for (Long symbol : symbols) {
+			displayFountain(symbol, flexTable);
 		}
 	}
 
-	private void displayFountains(Long[] symbols) {
-		for (Long symbol : symbols) {
-			displayFountain(symbol);
+	private void displayFountain(final Long symbol, final FlexTable flexTable) {
+		int row = flexTable.getRowCount();
+		if(flexTable.toString() == favoritesFlexTable.toString()){
+			displayFavorite(symbol);
 		}
+		flexTable.setText(row, 0, String.valueOf(symbol));
+		displayRating(symbol, row, flexTable);
+		displayLatLng(symbol, row, flexTable);
+		displayLocation(symbol, row, flexTable);
+		displayMaintainer(symbol, row, flexTable);
+		displayNumberOfFavorites(symbol, row, flexTable);
+	}
+	
+	private void displayLatLng(long symbol, final int row, final FlexTable flexTable) {
+		waterFountainService.getLatAndLong(symbol, new AsyncCallback<Double[]>() {
+			public void onFailure(Throwable caught) {
+				handleError(caught);
+			}
+			public void onSuccess(Double[] result) {
+				flexTable.setText(row, 2, String.valueOf(result[0]) + " " + String.valueOf(result[1]));
+			}
+		});
+	}
+	
+	private void displayLocation(long symbol, final int row, final FlexTable flexTable) {
+		waterFountainService.getLocationString(symbol, new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				handleError(caught);
+			}
+			public void onSuccess(String result) {
+				flexTable.setText(row, 3, result);
+			}
+		});
+	}
+
+	private void displayMaintainer(long symbol, final int row, final FlexTable flexTable) {
+		waterFountainService.getMaintainerString(symbol, new AsyncCallback<String>() {
+			public void onFailure(Throwable caught) {
+				handleError(caught);
+			}
+			public void onSuccess(String result) {
+				flexTable.setText(row, 4, result);
+			}
+		});
+	}
+	
+	private void displayNumberOfFavorites(long symbol, final int row, final FlexTable flexTable) {
+		waterFountainService.getNumberOfUsers(symbol, new AsyncCallback<Integer>() {
+			public void onFailure(Throwable caught) {
+				handleError(caught);
+			}
+			public void onSuccess(Integer result) {
+				flexTable.setText(row, 5, String.valueOf(result));
+			}
+			
+		});
 	}
 	
 	private void displayFavorite(final Long symbol) {
 		int row = favoritesFlexTable.getRowCount();
 		waterFountains.add(symbol);
 		favoritesFlexTable.setText(row, 0, String.valueOf(symbol));
-		displayRating(symbol, row);
+		displayRating(symbol, row, favoritesFlexTable);
 		
 		Button removeWaterFountainButton = new Button("Remove Fountain");
 		removeWaterFountainButton.addClickHandler(new ClickHandler() {
@@ -274,12 +341,6 @@ public class Thirst implements EntryPoint {
 			}
 		});
 		favoritesFlexTable.setWidget(row, 3, removeWaterFountainButton);
-	}
-
-	private void displayFountain(final Long symbol) {
-		int row = waterFountainFlexTable.getRowCount();
-		waterFountainFlexTable.setText(row, 0, String.valueOf(symbol));
-		displayRating(symbol, row);
 	}
 
 	private void removeWaterFountain(final Long symbol) {
@@ -347,7 +408,9 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	private void displayRating(long idNum, final int place) {
+	// TODO create another flextable to store the ratings
+	// so that if there are less than 10, all ten appear
+	private void displayRating(long idNum, final int place, final FlexTable flexTable) {
 		waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
@@ -355,10 +418,9 @@ public class Thirst implements EntryPoint {
 			public void onSuccess(Integer rating) {
 				int row = place;
 				if(rating == -1) {
-					waterFountainFlexTable.setText(row, 1, "Be the first to rate this fountain");
-					waterFountainFlexTable.setWidget(row, 2, addRatingButton);
+					flexTable.setText(row, 1, "Be the first to rate this fountain");
 				} else {
-					waterFountainFlexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
+					flexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
 				}
 			}
 		});
@@ -390,6 +452,7 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
+	// TODO refactor this method
 	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
 		
 		Marker[] markers = new Marker[latlngs.size()];
@@ -406,7 +469,7 @@ public class Thirst implements EntryPoint {
 			markers[i] = temp;
 	    }
 	    
-	    // TODO: add Id, number of favorites, fbook and twitter to infowindow
+	    // TODO: add Id, number of favorites, link to profile, fbook and twitter to infowindow
 	    for(int i = 0; i < ids.size(); i++) {
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
@@ -446,7 +509,7 @@ public class Thirst implements EntryPoint {
 				handleError(error);
 			}
 			public void onSuccess(Void ignore) {
-				displayFountain(id);
+				displayFountain(id, favoritesFlexTable);
 			}
 		});
 	}
