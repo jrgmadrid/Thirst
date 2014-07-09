@@ -182,6 +182,7 @@ public class Thirst implements EntryPoint {
 		welcomePanel.add(welcomeLabel);
 	}
 	
+	// TODO DOROTHY: feel free to put the upload photo shit into the add panel for now
 	private void createAddPanel() {
 		Label addLabel = new Label("to add a water fountain to your favorites list enter the ID number into the text box.");
 		addPanel.add(addLabel);
@@ -466,12 +467,12 @@ public class Thirst implements EntryPoint {
 			markers[i] = temp;
 	    }
 	    
-	    // TODO: add Id, number of favorites, link to profile, fbook and twitter to infowindow
+	    // TODO: JACOB add Id, link to profile, fbook and twitter to infowindow 
 	    for(int i = 0; i < ids.size(); i++) {
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
-//			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
-//			ratingPanel.add(idString);
+			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
+			ratingPanel.add(idString);
 	    	InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
 			infoWindows[i] = infContent;
 	    }
