@@ -462,16 +462,6 @@ public class Thirst implements EntryPoint {
 		}
 	}
 	
-	private void checkIn(String message) {
-		FacebookUtil.getInstance().doGraph(
-				"/me/feed",
-				RequestBuilder.POST,
-				"message="
-					+URL.encodeQueryString(message),
-				new Callback<JSONObject, Throwable>() {
-					public void onFailure(Throwable reason) { }
-					public void onSuccess(JSONObject result) {} } );
-	}
 }
 	
 	

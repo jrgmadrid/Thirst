@@ -19,6 +19,7 @@ so that your app can take advantage of the latest GWT module capabilities.
   
   <inherits name='com.google.gwt.maps.GoogleMaps' />
   <inherits name='com.google.api.gwt.oauth2.OAuth2' />
+  <inherits name="com.google.gwt.json.JSON" />
   <!-- Other module inherits -->
   
 
