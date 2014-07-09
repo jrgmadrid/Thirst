@@ -1,7 +1,5 @@
 package punishers.thirst.client;
 
-import com.google.gwt.maps.client.geom.LatLng;
-
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -26,5 +24,18 @@ public interface WaterFountainService extends RemoteService {
 	public int getDatastoreSize() throws NotLoggedInException;
 
 	public Double[] getAllLatAndLngAndId() throws NotLoggedInException;
+<<<<<<< HEAD
 
+=======
+	
+	public String getLocationString(long id) throws NotLoggedInException;
+	
+	public String getMaintainerString(long id) throws NotLoggedInException;
+	
+	public int getNumberOfUsers(long id) throws NotLoggedInException;
+	
+	public Double[] getLatAndLong(long id) throws NotLoggedInException;
+	
+//	public Double[] getFavWaterFountainsLatLng() throws NotLoggedInException;
+>>>>>>> master
 }

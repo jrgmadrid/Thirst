@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.jdo.JDOHelper;
@@ -15,7 +14,6 @@ import javax.jdo.Query;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 import punishers.thirst.client.NotLoggedInException;
@@ -81,6 +79,83 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 	}
 	
+	public String getLocationString(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		String result = "";
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getLocation();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public String getMaintainerString(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		String result = "";
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getMaintainer();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public int getNumberOfUsers(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		int result = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			result = wf.getNumberOfUsers();
+		} finally {
+			pm.close();
+		}
+		return result;
+	}
+	
+	public Double[] getLatAndLong(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		ArrayList<Double> results = null;
+		int size = 0;
+		PersistenceManager pm = getPersistenceManager();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			results = new ArrayList<Double>();
+			double lat = wf.getLatitude();
+			double lng = wf.getLongitude();
+			results.add(lat);
+			results.add(lng);
+		} finally {
+			pm.close();
+		}
+		return (Double[]) results.toArray(new Double[2]);
+	}
+	
 	public int getAverageWaterFountatinRating(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		int averageRating = 0;
@@ -118,6 +193,29 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements Wa
 		}
 		return (Long[]) results.toArray(new Long[results.size()]);
 	}
+	
+//	public Double[] getFavWaterFountainsLatLng() throws NotLoggedInException {
+//		checkLoggedIn();
+//		PersistenceManager pm = getPersistenceManager();
+//		List<Double> results = new ArrayList<Double>();
+//		try {
+//			Query q = pm.newQuery(WaterFountain.class);
+//			q.declareImports("import punishers.thirst.server.WaterFountain");
+//			List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
+//			for(WaterFountain wf : waterFountains) {
+//				Set<User> people = wf.getUsers();
+//				if(people.contains(getUser())) {
+//					double lat = wf.getLatitude();
+//					double lng = wf.getLongitude();
+//					results.add(lat);
+//					results.add(lng);
+//				}
+//			}
+//		} finally {
+//			pm.close();
+//		}
+//		return (Double[]) results.toArray(new Double[results.size()]);
+//	}
 	
 	public Long[] getAllIds() throws NotLoggedInException {
 		checkLoggedIn();

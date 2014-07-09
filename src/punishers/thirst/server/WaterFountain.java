@@ -52,17 +52,6 @@ public class WaterFountain {
 		this.photos = new HashSet<Photo>();
 	}
 	
-	/*
-	 * Sets the Id of the water fountain (done during the parsing process
-	 */
-//	public void setId() {
-//		long temp = Long.valueOf(hashCode());
-//		if (temp < 0)
-//			this.id = temp * -1;
-//		else
-//			this.id = temp;
-//	}
-	
 	public Set<Integer> getRatings() {
 		return this.ratings;
 	}
@@ -81,6 +70,10 @@ public class WaterFountain {
 			}
 		}
 		return total/count;
+	}
+	
+	public int getNumberOfUsers() {
+		return users.size();
 	}
 	
 	/*
