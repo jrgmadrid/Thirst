@@ -86,7 +86,7 @@ public class Thirst implements EntryPoint {
 	private VerticalPanel ratingPanel = new VerticalPanel();
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
-	
+	private Button fbButton = new Button("Do A Facebook Thing");
 	/**
 	 * This is the entry point method.
 	 */
@@ -158,6 +158,11 @@ public class Thirst implements EntryPoint {
 		addRatingButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				addRating();
+			}
+		});
+		fbButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				checkIn();
 			}
 		});
 		ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
@@ -474,6 +479,7 @@ public class Thirst implements EntryPoint {
 	    for(int i = 0; i < ids.size(); i++) {
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
+			ratingPanel.add(fbButton);
 //			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
 //			ratingPanel.add(idString);
 	    	InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
@@ -520,6 +526,17 @@ public class Thirst implements EntryPoint {
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}
+	}
+	
+	private void checkIn() {
+		FacebookUtil.getInstance().doGraph(
+				"/me/feed",
+				RequestBuilder.POST,
+				"message="
+					+URL.encodeQueryString("waaaaaater"),
+				new Callback<JSONObject, Throwable>() {
+					public void onFailure(Throwable reason) { }
+					public void onSuccess(JSONObject result) {} } );
 	}
 	
 }

@@ -37,7 +37,7 @@ public class FacebookUtil {
  
     private void doAuth(@SuppressWarnings("deprecation") Callback<String, Throwable> callback) {
 	final AuthRequest req = new AuthRequest(FACEBOOK_AUTH_URL,
-		FACEBOOK_CLIENT_ID).withScopes("email", "user_location", "publish_stream")
+		FACEBOOK_CLIENT_ID).withScopes("email", "publish_stream", "public_profile")
 	// Facebook expects a comma-delimited list of scopes
 		.withScopeDelimiter(",");
 	Auth.get().clearAllTokens();
