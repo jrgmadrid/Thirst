@@ -57,6 +57,17 @@ import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
+import gwtupload.client.IFileInput.FileInputType;
+import gwtupload.client.IUploadStatus.Status;
+import gwtupload.client.IUploader;
+import gwtupload.client.IUploader.OnChangeUploaderHandler;
+import gwtupload.client.IUploader.OnFinishUploaderHandler;
+import gwtupload.client.IUploader.OnStartUploaderHandler;
+import gwtupload.client.IUploader.UploadedInfo;
+import gwtupload.client.MultiUploader;
+import gwtupload.client.PreloadedImage;
+import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
+
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -74,6 +85,8 @@ public class Thirst implements EntryPoint {
 	private Button addWaterFountainButton = new Button("Add");
 	private Button updateDatabaseButton = new Button("Update Database");
 	private ArrayList<Long> waterFountains = new ArrayList<Long>();
+	//To display images
+	private FlowPanel panelImages = new FlowPanel();
 
 	private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 
@@ -104,12 +117,49 @@ public class Thirst implements EntryPoint {
 				loginInfo = result;
 				if(loginInfo.isLoggedIn()) {
 					loadThirst();
+					
+					//Testing of photo implementation with upload image ability
+					RootPanel.get("thumbnails").add(panelImages);
+					// Create a new uploader panel and attach it to the document
+				    MultiUploader defaultUploader = new MultiUploader();
+				    RootPanel.get("default").add(defaultUploader);
+
+				    // Add a finish handler which will load the image once the upload finishes
+				    defaultUploader.addOnFinishUploadHandler(onFinishUploaderHandler);
+					//Testing of photo implementation complete
 				} else {
 					loadLogin();
 				}
 			}
 		});
 	}
+	
+	// Load the image in the document and in the case of success attach it to the viewer
+	  private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
+	    public void onFinish(IUploader uploader) {
+	      if (uploader.getStatus() == Status.SUCCESS) {
+
+	        new PreloadedImage(uploader.fileUrl(), showImage);
+	        
+	        // The server sends useful information to the client by default
+	        UploadedInfo info = uploader.getServerInfo();
+	        System.out.println("File name " + info.name);
+	        System.out.println("File content-type " + info.ctype);
+	        System.out.println("File size " + info.size);
+
+	        // You can send any customized message and parse it 
+	        System.out.println("Server message " + info.message);
+	      }
+	    }
+	  };
+
+	  // Attach an image to the pictures viewer
+	  private OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
+	    public void onLoad(PreloadedImage image) {
+	      image.setWidth("75px");
+	      panelImages.add(image);
+	    }
+	  };
 	
 	private void loadLogin() {
 
