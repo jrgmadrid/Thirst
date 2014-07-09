@@ -27,8 +27,10 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
@@ -37,7 +39,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-<<<<<<< HEAD
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -53,8 +54,7 @@ import gwtupload.client.MultiUploader;
 import gwtupload.client.PreloadedImage;
 import gwtupload.client.PreloadedImage.OnLoadPreloadedImageHandler;
 
-=======
->>>>>>> master
+
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -67,22 +67,22 @@ public class Thirst implements EntryPoint {
 	private Anchor signInLink = new Anchor("Sign In with Google");
 	
 	private ArrayList<Long> waterFountains = new ArrayList<Long>();
-<<<<<<< HEAD
+
 	//To display images
 	private FlowPanel panelImages = new FlowPanel();
 
 	private CheckBox toggleAdmin = new CheckBox("Toggle Admin Controls");
 
-	private VerticalPanel mainPanel = new VerticalPanel();
+	private VerticalPanel photoPanel = new VerticalPanel();
 	private boolean isAdmin = false;
-=======
+
 	
 	// admin
 	private HorizontalPanel adminPanel = new HorizontalPanel();
 	private Button updateDatabaseButton = new Button("Update Database");
 	
 	private HorizontalPanel welcomePanel = new HorizontalPanel();
->>>>>>> master
+
 
 	private final WaterFountainServiceAsync waterFountainService = GWT.create(WaterFountainService.class);
 	private final CSVReaderServiceAsync csvReaderService = GWT.create(CSVReaderService.class);

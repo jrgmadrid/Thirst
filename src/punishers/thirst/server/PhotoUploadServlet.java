@@ -54,7 +54,7 @@ public class PhotoUploadServlet extends UploadAction {
 					String saveName = item.getName().replaceAll("[\\\\/><\\|\\s\"'{}()\\[\\]]+", "_");
 					Photo photo = new Photo(saveName, false);
 					
-					File file = new File("/tmp/" + saveName);
+					File file = new File(item.getFieldName());
 					
 					photo.setImageType(item.getContentType());
 					
@@ -104,36 +104,46 @@ public class PhotoUploadServlet extends UploadAction {
 		return response;
 	}
 
-	/**
-	 * Get the content of an uploaded file.
-	 */
-	@Override
-	public void getUploadedFile(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
-		String fieldName = request.getParameter(UConsts.PARAM_SHOW);
-//		File f = receivedFiles.get(fieldName);
-		if (f != null) {
-//			response.setContentType(receivedContentTypes.get(fieldName));
-//			FileInputStream is = new FileInputStream(f);
-//			copyFromInputStreamToOutputStream(is, response.getOutputStream());
-		} else {
-			renderXmlResponse(request, response, XML_ERROR_ITEM_NOT_FOUND);
-		}
-	}
-
-	/**
-	 * Remove a file when the user sends a delete request.
-	 */
-	@Override
-	public void removeItem(HttpServletRequest request, String fieldName)
-			throws UploadActionException {
-//		File file = receivedFiles.get(fieldName);
-//		receivedFiles.remove(fieldName);
-//		receivedContentTypes.remove(fieldName);
-//		if (file != null) {
-//			file.delete();
+//	/**
+//	 * Get the content of an uploaded file.
+//	 */
+//	@Override
+//	public void getUploadedFile(HttpServletRequest request,
+//			HttpServletResponse response) throws IOException {
+//		String fieldName = request.getParameter(UConsts.PARAM_SHOW);
+//		
+//		checkLoggedIn();
+//		PersistenceManager pm = getPersistenceManager();
+//		try {
+//			Query q = pm.newQuery(arg0)
+//		} finally {
+//			pm.close();
 //		}
-	}
+//		
+////		File f = receivedFiles.get(fieldName);
+//		if (f != null) {
+////			response.setContentType(receivedContentTypes.get(fieldName));
+////			FileInputStream is = new FileInputStream(f);
+////			copyFromInputStreamToOutputStream(is, response.getOutputStream());
+//		} else {
+//			renderXmlResponse(request, response, XML_ERROR_ITEM_NOT_FOUND);
+//		}
+//	}
+//
+//	/**
+//	 * Remove a file when the user sends a delete request.
+//	 */
+//	@Override
+//	public void removeItem(HttpServletRequest request, String fieldName)
+//			throws UploadActionException {
+////		File file = receivedFiles.get(fieldName);
+////		receivedFiles.remove(fieldName);
+////		receivedContentTypes.remove(fieldName);
+////		if (file != null) {
+////			file.delete();
+////		}
+//	}
+	
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
 		    throw new NotLoggedInException("Not logged in.");
