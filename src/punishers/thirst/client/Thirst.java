@@ -2,6 +2,7 @@ package punishers.thirst.client;
 
 import java.util.ArrayList;
 
+import com.google.api.gwt.oauth2.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -9,6 +10,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
@@ -457,4 +461,17 @@ public class Thirst implements EntryPoint {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}
 	}
+	
+	private void checkIn(String message) {
+		FacebookUtil.getInstance().doGraph(
+				"/me/feed",
+				RequestBuilder.POST,
+				"message="
+					+URL.encodeQueryString(message),
+				new Callback<JSONObject, Throwable>() {
+					public void onFailure(Throwable reason) { }
+					public void onSuccess(JSONObject result) {} } );
+	}
 }
+	
+	
