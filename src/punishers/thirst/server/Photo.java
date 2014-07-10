@@ -53,6 +53,10 @@ public class Photo {
     public int getId() {
     	return id;
     }
+    
+    public User getUser() {
+    	return user;
+    }
 
     public String getImageType() {
         return imageType;

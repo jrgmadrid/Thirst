@@ -280,6 +280,70 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements
 		}
 		return (Double[]) results.toArray(new Double[size]);
 	}
+	
+	public byte[][] getUserImageUploads() throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		ArrayList<byte[]> byteArray = new ArrayList<byte[]>();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
+			Set<Photo> photos = new HashSet<Photo>();
+			for (WaterFountain wf : wfs) {
+				Set<Photo> ps = wf.getPhotos();
+				for (Photo p : ps) {
+					if (p.getUser() == getUser()) {
+						photos.add(p);
+					}
+				}
+			}
+			for (Photo p : photos) {
+				byte[] bytes = p.getImage().getBytes();
+				byteArray.add(bytes);
+			}
+		} finally {
+			pm.close();
+		}
+		byte[][] arrayOfImages = new byte[byteArray.size()][1050000];
+		int i = 0;
+		for (byte[] bytes : byteArray) {
+			arrayOfImages[i] = bytes;
+			i++;
+		}
+		return arrayOfImages;
+	}
+	
+	public byte[][] getFountainImages(long id) throws NotLoggedInException {
+		checkLoggedIn();
+		PersistenceManager pm = getPersistenceManager();
+		ArrayList<byte[]> byteArray = new ArrayList<byte[]>();
+		try {
+			Query q = pm.newQuery(WaterFountain.class);
+			q.setFilter("id == idParam");
+			q.declareParameters("Long idParam");
+			q.declareImports("import punishers.thirst.server.WaterFountain");
+			List<WaterFountain> wfsWithId = (List<WaterFountain>) q.execute(id);
+			WaterFountain wf = wfsWithId.get(0);
+			Set<Photo> photos = new HashSet<Photo>();
+			for (Photo p : wf.getPhotos()) {
+				photos.add(p);
+			}
+			for (Photo p : photos) {
+				byte[] bytes = p.getImage().getBytes();
+				byteArray.add(bytes);
+			}
+		} finally {
+			pm.close();
+		}
+		byte[][] arrayOfImages = new byte[byteArray.size()][1050000];
+		int i = 0;
+		for (byte[] bytes : byteArray) {
+			arrayOfImages[i] = bytes;
+			i++;
+		}
+		return arrayOfImages;
+	}
 
 	private void checkLoggedIn() throws NotLoggedInException {
 		if (getUser() == null) {
