@@ -280,7 +280,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements
 		}
 		return (Double[]) results.toArray(new Double[size]);
 	}
-	
+
 	public byte[][] getUserImageUploads() throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
@@ -313,7 +313,7 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements
 		}
 		return arrayOfImages;
 	}
-	
+
 	public byte[][] getFountainImages(long id) throws NotLoggedInException {
 		checkLoggedIn();
 		PersistenceManager pm = getPersistenceManager();
@@ -360,48 +360,44 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements
 		return PMF.getPersistenceManager();
 	}
 
-
-
-
-//	 public void deleteAllFountains() throws NotLoggedInException {
-//	 checkLoggedIn();
-//	 PersistenceManager pm = getPersistenceManager();
-//	 List<Long> results = new ArrayList<Long>();
-//	 try {
-//	 Query q = pm.newQuery(WaterFountain.class);
-//	 q.declareImports("import punishers.thirst.server.WaterFountain");
-//	 List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
-//	 for(WaterFountain wf : waterFountains) {
-//	 Set<User> people = wf.getUsers();
-//	 if(people.contains(getUser())) {
-//	 results.add(wf.getId());
-//	 }
-//	 }
-//	 } finally {
-//	 pm.close();
-//	 }
-//	 return (Long[]) results.toArray(new Long[results.size()]);
-//	 }
-//
-//	@Override
-//	public int getDatastoreSize() throws NotLoggedInException {
-//		checkLoggedIn();
-//		PersistenceManager pm = getPersistenceManager();
-//		int size = 0;
-//		try {
-//			Query q = pm.newQuery(WaterFountain.class);
-//			q.declareImports("import punishers.thirst.server.WaterFountain");
-//			List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-//			if (wfs == null)
-//				size = 0;
-//			if (wfs != null) {
-//				size = wfs.size();
-//			}
-//		} finally {
-//			pm.close();
-//		}
-//		return size;
-//	}
-
+	// public void deleteAllFountains() throws NotLoggedInException {
+	// checkLoggedIn();
+	// PersistenceManager pm = getPersistenceManager();
+	// List<Long> results = new ArrayList<Long>();
+	// try {
+	// Query q = pm.newQuery(WaterFountain.class);
+	// q.declareImports("import punishers.thirst.server.WaterFountain");
+	// List<WaterFountain> waterFountains = (List<WaterFountain>) q.execute();
+	// for(WaterFountain wf : waterFountains) {
+	// Set<User> people = wf.getUsers();
+	// if(people.contains(getUser())) {
+	// results.add(wf.getId());
+	// }
+	// }
+	// } finally {
+	// pm.close();
+	// }
+	// return (Long[]) results.toArray(new Long[results.size()]);
+	// }
+	//
+	// @Override
+	// public int getDatastoreSize() throws NotLoggedInException {
+	// checkLoggedIn();
+	// PersistenceManager pm = getPersistenceManager();
+	// int size = 0;
+	// try {
+	// Query q = pm.newQuery(WaterFountain.class);
+	// q.declareImports("import punishers.thirst.server.WaterFountain");
+	// List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
+	// if (wfs == null)
+	// size = 0;
+	// if (wfs != null) {
+	// size = wfs.size();
+	// }
+	// } finally {
+	// pm.close();
+	// }
+	// return size;
+	// }
 
 }

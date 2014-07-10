@@ -26,5 +26,9 @@ public interface WaterFountainServiceAsync {
 
 	public void getLatAndLong(long id, AsyncCallback<Double[]> callback);
 
+	void getUserImageUploads(AsyncCallback<byte[][]> callback);
+
+	void getFountainImages(long id, AsyncCallback<byte[][]> callback);
+
 //	public void getFavWaterFountainsLatLng(AsyncCallback<Double[]> callback);
 }
