@@ -62,16 +62,16 @@ public class Photo {
     	return firstImage;
     }
     
-    public byte[] getImage() {
-        if (image == null) {
-            return null;
-        }
-        return image.getBytes();
-    }
-    
-//    public Blob getImage() {
-//    	return image;
+//    public byte[] getImage() {
+//        if (image == null) {
+//            return null;
+//        }
+//        return image.getBytes();
 //    }
+    
+    public Blob getImage() {
+    	return image;
+    }
     
     public void rename(String name) {
         this.name = name;
@@ -81,13 +81,13 @@ public class Photo {
         this.imageType = imageType;
     }
 
-    public void setImage(byte[] bytes) {
-        this.image = new Blob(bytes);
-    }
-    
-//    public void setImage(Blob image) {
-//    	this.image = image;
+//    public void setImage(byte[] bytes) {
+//        this.image = new Blob(bytes);
 //    }
+    
+    public void setImage(Blob image) {
+    	this.image = image;
+    }
     
     public void setFirstImage(boolean b) {
     	this.firstImage = b; 

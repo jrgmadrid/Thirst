@@ -17,6 +17,7 @@ import org.apache.commons.fileupload.FileItem;
 
 import punishers.thirst.client.NotLoggedInException;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -62,11 +63,12 @@ public class PhotoUploadServlet extends UploadAction {
 					
 					FileInputStream iS = new FileInputStream(file);
 					iS.read(fileContent);
+					Blob image = new Blob(fileContent);
 					
 					checkLoggedIn();
 					PersistenceManager pm = getPersistenceManager();
 					try {
-						photo.setImage(fileContent);
+						photo.setImage(image);
 						photo.setUser(getUser());	
 						pm.makePersistent(photo);
 					} finally {
