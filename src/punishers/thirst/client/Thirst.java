@@ -91,6 +91,7 @@ public class Thirst implements EntryPoint {
 	private Button twitterButton = new Button("Do A Twitter Thing");
 	
 	private Marker[] markers = new Marker[233];
+	private Long[] idList = new Long[233];
 	/**
 	 * This is the entry point method.
 	 */
@@ -158,29 +159,6 @@ public class Thirst implements EntryPoint {
 		mainPanel.add(mapAndFlexTablePanel);
 
 		RootLayoutPanel.get().add(mainPanel);
-
-		addRatingButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				addRating();
-			}
-		});
-		fbButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				checkIn();
-			}
-		});
-		twitterButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				tweetThis();
-			}
-		});
-		ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
-			public void onKeyDown(KeyDownEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					addRating();
-				}
-			}
-		});
 		addWaterFountainButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				addWaterFountain();
@@ -276,6 +254,7 @@ public class Thirst implements EntryPoint {
 				
 			}
 			public void onSuccess(Long[] symbols) {
+				idList = symbols;
 				displayFountains(symbols, waterFountainFlexTable);
 			}
 		});
@@ -402,13 +381,17 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	private void addRating() {
+	private void addRating(String s) {
+		//Window.alert("We've entered the function!");
 		final int rating = Integer.valueOf(ratingTextBox.getText().trim());
-		ratingTextBox.setFocus(true);
+		//ratingTextBox.setFocus(true);
+		Window.alert(s);
 		
-		final long idNum = Long.valueOf(newIdTextBox.getText().trim());
-		newIdTextBox.setFocus(true);
-
+		final long idNum = Long.valueOf(s);
+		Window.alert(String.valueOf(idNum));
+		//newIdTextBox.setFocus(true);
+		Window.alert("We're at the if");
+		
 		if(rating < 0 || rating > 7) {
 			Window.alert("Please enter a number between 0 and 7");
 			ratingTextBox.selectAll();
@@ -421,13 +404,15 @@ public class Thirst implements EntryPoint {
 	}
 	
 	private boolean isFavorite(long idNum) {
-		ArrayList<Long> faves = loadFavoriteWaterFountains();
-		return faves.contains(idNum);
+		//ArrayList<Long> faves = loadFavoriteWaterFountains();
+		Window.alert(String.valueOf(waterFountains.contains(idNum)));
+		return waterFountains.contains(idNum);
 	}
 
 	private void addRatingToWaterFountain(final long idNum, final int rating) {
 		waterFountainService.addRating(idNum, rating, new AsyncCallback<Void>() {
 			public void onFailure(Throwable error) {
+				Window.alert("Boo, we sucked.");
 				handleError(error);
 			}
 			public void onSuccess(Void ignore) {
@@ -493,12 +478,11 @@ public class Thirst implements EntryPoint {
 	    
 	    for(int i = 0; i < latlngs.size(); i++) {
 	    	MarkerOptions mo = MarkerOptions.newInstance();
-	    	mo.setTitle("ID: " + Double.toString(ids.get(i)));
+	    	mo.setTitle(String.valueOf(ids.get(i)));
 	    	Marker temp = new Marker(latlngs.get(i),mo);
 	    	//temp.getTitle()
 			markers[i] = temp;
 	    }
-	    
 	    // TODO: add Id, number of favorites, link to profile, fbook and twitter to infowindow
 	    for(int i = 0; i < ids.size(); i++) {
 
@@ -517,6 +501,29 @@ public class Thirst implements EntryPoint {
 	    	temp.addMarkerClickHandler(new MarkerClickHandler() {
 	    		public void onClick(MarkerClickEvent event) {
 	    			map.getInfoWindow().open(temp, infoWindows[position]);
+	    			addRatingButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					//Window.alert("IT CLICKED");
+	    					addRating(temp.getTitle());
+	    				}
+	    			});
+	    			fbButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					checkIn(temp);
+	    				}
+	    			});
+	    			twitterButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					tweetThis();
+	    				}
+	    			});
+	    			ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
+	    				public void onKeyDown(KeyDownEvent event) {
+	    					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+	    						addRating(temp.getTitle());
+	    					}
+	    				}
+	    			});
 	    		}
 	    	});
 			map.addOverlay(temp);
@@ -553,12 +560,12 @@ public class Thirst implements EntryPoint {
 		}*/
 	}
 	
-	private void checkIn() {
+	private void checkIn(Marker m) {
 		FacebookUtil.getInstance().doGraph(
 				"/me/feed",
 				RequestBuilder.POST,
 				"message="
-					+URL.encodeQueryString("waaaaaater"),
+					+URL.encodeQueryString(m.getTitle()),
 				new Callback<JSONObject, Throwable>() {
 					public void onFailure(Throwable reason) { }
 					public void onSuccess(JSONObject result) {} } );
