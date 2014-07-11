@@ -54,8 +54,6 @@ public class PhotoUploadServlet extends UploadAction {
 				try {
 					// / Create a new file based on the remote file name in the
 					// client
-					//String wfIdNum = item.getFieldName().split("-")[0];
-					//ORRRR
 					String wfIdNum = request.getParameter("wfidnum");
 					long idNum = Long.valueOf(wfIdNum);
 					String saveName = item.getName().replaceAll("[\\\\/><\\|\\s\"'{}()\\[\\]]+", "_");

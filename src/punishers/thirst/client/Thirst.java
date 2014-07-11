@@ -225,68 +225,8 @@ public class Thirst implements EntryPoint {
 		addPanel.add(addWaterFountainButton);
 		addPanel.addStyleName("addPanel");
 		newIdTextBox.setFocus(true);
-		
-		// Testing of photo implementation with upload image
-		// ability
-		RootPanel.get("thumbnails").add(panelImages);
-		// Create a new uploader panel and attach it to the
-		// document
-		MultiUploader defaultUploader = new MultiUploader();
-
-		// TODO setFileInputPrefix needs the ID number of
-		// water fountain in a string that will be parsed so
-		// it looks like "blahblahblah-"
-
-		// defaultUploader.setFileInputPrefix(/*
-		// * NEED A WAY TO
-		// * GET ID NUMBER
-		// * OF WATER
-		// * FOUNTAIN
-		// */);
-		//
-		// ORRR
-		//
-		// defaultUploader.setServletPath(defaultUploader.getServletPath()
-		// + "?wfidnum=" + /* WaterFountain id */);
-		//
-		RootPanel.get("default").add(defaultUploader);
-
-		// Add a finish handler which will load the image
-		// once the upload finishes
-		defaultUploader
-				.addOnFinishUploadHandler(onFinishUploaderHandler);
-		// Testing of photo implementation complete
-		
 	}
 
-	//Load the image in the document and in the case of success attach it to
-	// the viewer
-	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
-		public void onFinish(IUploader uploader) {
-			if (uploader.getStatus() == Status.SUCCESS) {
-					
-				new PreloadedImage(uploader.fileUrl(), showImage);
-					
-				// The server sends useful information to the client by default
-				UploadedInfo info = uploader.getServerInfo();
-				
-				System.out.println("File name " + info.name);
-				System.out.println("File content-type " + info.ctype);
-				System.out.println("File size " + info.size);
-
-				// You can send any customized message and parse it
-				System.out.println("Server message " + info.message);
-			}
-		}
-	};
-	
-	//Attach an image to the pictures viewer
-	private OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
-		public void onLoad(PreloadedImage image) {
-			image.setWidth("75px");
-			panelImages.add(image);
-		}
-	};
 	
 	private void createWaterFountainTab() {
 		waterFountainFlexTable.setText(0, 0, "WaterFountainId");
@@ -692,8 +632,55 @@ public class Thirst implements EntryPoint {
 		 * string PictureUrl = getImage(id);
 		 * displayImage(pictureUrl);
 		 */
-		
-	}
+		// Testing of photo implementation with upload image
+				// ability
+				RootPanel.get("thumbnails").add(panelImages);
+				// Create a new uploader panel and attach it to the
+				// document
+				MultiUploader defaultUploader = new MultiUploader();
+
+				String idString = String.valueOf(id);
+				defaultUploader.setServletPath(defaultUploader.getServletPath() + "?wfidnum=" + idString);
+				
+				RootPanel.get("default").add(defaultUploader);
+
+				// Add a finish handler which will load the image
+				// once the upload finishes
+				defaultUploader
+						.addOnFinishUploadHandler(onFinishUploaderHandler);
+				// Testing of photo implementation complete
+				
+	} 
+	
+
+	//Load the image in the document and in the case of success attach it to
+	// the viewer
+	private IUploader.OnFinishUploaderHandler onFinishUploaderHandler = new IUploader.OnFinishUploaderHandler() {
+		public void onFinish(IUploader uploader) {
+			if (uploader.getStatus() == Status.SUCCESS) {
+					
+				new PreloadedImage(uploader.fileUrl(), showImage);
+					
+				// The server sends useful information to the client by default
+				UploadedInfo info = uploader.getServerInfo();
+				
+				System.out.println("File name " + info.name);
+				System.out.println("File content-type " + info.ctype);
+				System.out.println("File size " + info.size);
+
+				// You can send any customized message and parse it
+				System.out.println("Server message " + info.message);
+			}
+		}
+	};
+	
+	//Attach an image to the pictures viewer
+	private OnLoadPreloadedImageHandler showImage = new OnLoadPreloadedImageHandler() {
+		public void onLoad(PreloadedImage image) {
+			image.setWidth("75px");
+			panelImages.add(image);
+		}
+	};
 	
 	
 	private void handleError(Throwable error) {
