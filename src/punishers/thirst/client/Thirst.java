@@ -106,7 +106,6 @@ public class Thirst implements EntryPoint {
 	/**
 	 * This is the entry point method.
 	 */
-	// TODO make page seen before sign in more appealing
 	public void onModuleLoad() {
 	
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
@@ -284,7 +283,7 @@ public class Thirst implements EntryPoint {
 		if(flexTable.toString() == favoritesFlexTable.toString()){
 			displayFavorite(symbol);
 		}
-		// maybe comment this thing out
+
 		flexTable.setText(row, 0, String.valueOf(symbol));
 		Hyperlink fountain = new Hyperlink(String.valueOf(symbol), String.valueOf(symbol));
 		flexTable.setWidget(row, 0,fountain);
@@ -444,21 +443,20 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	// TODO create another flextable to store the ratings so that if there are less than 10, all ten appear
 	private void displayRating(long idNum, final int place, final FlexTable flexTable) {
-		waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
-			public void onFailure(Throwable error) {
-				handleError(error);
-			}
-			public void onSuccess(Integer rating) {
-				int row = place;
-				if(rating == -1) {
-					flexTable.setText(row, 1, "Be the first to rate this fountain");
-				} else {
-					flexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
+			waterFountainService.getAverageWaterFountatinRating(idNum, new AsyncCallback<Integer>() {
+				public void onFailure(Throwable error) {
+					handleError(error);
 				}
-			}
-		});
+				public void onSuccess(Integer rating) {
+					int row = place;
+					if(rating == -1) {
+						flexTable.setText(row, 1, "Be the first to rate this fountain");
+					} else {
+						flexTable.setText(row, 1, String.valueOf(rating) + " out of 7");
+					}
+				}
+			});
 	}
 	
 	private void prepareMap() {
@@ -486,10 +484,8 @@ public class Thirst implements EntryPoint {
 			}
 		});
 	}
-	
-	// TODO refactor this method
+
 	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
-		
 		
 		final InfoWindowContent[] infoWindows = new InfoWindowContent[latlngs.size()];
 		
