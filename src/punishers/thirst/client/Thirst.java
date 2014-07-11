@@ -592,6 +592,7 @@ public class Thirst implements EntryPoint {
 		for (int i = 0; i < latlngs.size(); i++) {
 			Marker temp = new Marker(latlngs.get(i));
 			markers[i] = temp;
+
 		}
 
 		// TODO: add Id, number of favorites, link to profile, fbook and twitter
@@ -603,6 +604,7 @@ public class Thirst implements EntryPoint {
 			// String.valueOf(ids.get(i)));
 			// ratingPanel.add(idString);
 			InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
+
 			infoWindows[i] = infContent;
 		}
 
