@@ -555,8 +555,8 @@ public class Thirst implements EntryPoint {
 		updateDatabaseButton.addStyleName("profileHide");
 		
 		//Add back hyperlink
-		mainPanel.add(index);
-		
+		//mainPanel.add(index);
+		waterFountainScrollPanel.add(index);
 		//Placeholders
 		/*
 		 * string PictureUrl = getImage(id);
@@ -567,11 +567,8 @@ public class Thirst implements EntryPoint {
 	
 	
 	private void handleError(Throwable error) {
-<<<<<<< HEAD
 		//Window.alert("an async call is failing");
-=======
-//		Window.alert("an async call is failing");
->>>>>>> origin/master
+		//Window.alert("an async call is failing");
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}

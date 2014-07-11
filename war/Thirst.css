@@ -38,6 +38,6 @@ h1 {
 }
 /** Hide things on click to navigate to fountain profile */
 .profileHide {
-	/*display: none;*/
+	display: none;
 }
 
