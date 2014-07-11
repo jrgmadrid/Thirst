@@ -18,11 +18,14 @@ so that your app can take advantage of the latest GWT module capabilities.
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/> -->
   
   <inherits name='com.google.gwt.maps.GoogleMaps' />
+<<<<<<< HEAD
   
   <!-- Include GWTUpload library -->
   <inherits name="gwtupload.GWTUpload"/>
   <!-- Load dinamically predefined styles in the library when the application starts -->
   <stylesheet src="Upload.css"/>
+=======
+>>>>>>> master
 
   <!-- Other module inherits -->
 

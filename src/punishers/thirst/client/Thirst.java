@@ -9,6 +9,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
@@ -23,6 +25,7 @@ import punishers.thirst.client.LoginService;
 import punishers.thirst.client.LoginServiceAsync;
 import punishers.thirst.client.NotLoggedInException;
 
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
@@ -32,6 +35,7 @@ import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -111,6 +115,8 @@ public class Thirst implements EntryPoint {
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
 
+	//Hyperlinks
+	private Hyperlink index = new Hyperlink("<a>Back to index</a>","");
 	/**
 	 * This is the entry point method.
 	 */
@@ -368,12 +374,29 @@ public class Thirst implements EntryPoint {
 		if (flexTable.toString() == favoritesFlexTable.toString()) {
 			displayFavorite(symbol);
 		}
-		flexTable.setText(row, 0, String.valueOf(symbol));
+		//flexTable.setText(row, 0, String.valueOf(symbol));
+		Hyperlink fountain = new Hyperlink(String.valueOf(symbol), String.valueOf(symbol));
+		flexTable.setWidget(row, 0,fountain);
 		displayRating(symbol, row, flexTable);
 		displayLatLng(symbol, row, flexTable);
 		displayLocation(symbol, row, flexTable);
 		displayMaintainer(symbol, row, flexTable);
 		displayNumberOfFavorites(symbol, row, flexTable);
+		
+		History.addValueChangeHandler(new ValueChangeHandler<String>(){
+			public void onValueChange(ValueChangeEvent<String> event) {
+				String token = event.getValue();
+				if(token.length() == 0){
+					History.newItem("");
+					waterFountainProfilesHide();
+				}
+				else{
+					History.newItem(token);
+					waterFountainProfilesShow(Long.valueOf(token));
+				}
+			
+			}
+		});
 	}
 
 	private void displayLatLng(long symbol, final int row,
@@ -643,8 +666,39 @@ public class Thirst implements EntryPoint {
 				});
 	}
 
+	private void waterFountainProfilesHide(){
+		//Remove the class which does the hiding
+		welcomeLabel.removeStyleName("profileHide");
+		waterFountainFlexTable.removeStyleName("profileHide");
+		newIdTextBox.removeStyleName("profileHide");
+		addPanel.removeStyleName("profileHide");
+		addWaterFountainButton.removeStyleName("profileHide");
+		updateDatabaseButton.removeStyleName("profileHide");
+	}
+	
+	private void waterFountainProfilesShow(Long id) {
+		//Hide everything on the page
+		waterFountainFlexTable.addStyleName("profileHide");
+		newIdTextBox.addStyleName("profileHide");
+		addPanel.addStyleName("profileHide");
+		addWaterFountainButton.addStyleName("profileHide");
+		updateDatabaseButton.addStyleName("profileHide");
+		
+		//Add back hyperlink
+		//mainPanel.add(index);
+		waterFountainScrollPanel.add(index);
+		//Placeholders
+		/*
+		 * string PictureUrl = getImage(id);
+		 * displayImage(pictureUrl);
+		 */
+		
+	}
+	
+	
 	private void handleError(Throwable error) {
-		// Window.alert("an async call is failing");
+		//Window.alert("an async call is failing");
+		//Window.alert("an async call is failing");
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}

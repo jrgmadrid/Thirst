@@ -36,4 +36,8 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+/** Hide things on click to navigate to fountain profile */
+.profileHide {
+	display: none;
+}
 
