@@ -575,6 +575,7 @@ public class Thirst implements EntryPoint {
 		waterFountainScrollPanel.remove(profileFlexTable);
 		waterFountainScrollPanel.add(waterFountainFlexTable);
 		mainPanel.remove(index);
+		mapAndFlexTablePanel.setTabText(1, "All");
 	}
 	
 	private void waterFountainProfilesShow(Long id) {
@@ -587,6 +588,8 @@ public class Thirst implements EntryPoint {
 		
 		//Add back hyperlink
 		mainPanel.add(index);
+		
+		mapAndFlexTablePanel.setTabText(1, "Profile: " + String.valueOf(id));
 		
 		//index.addStyleName("profileActiveLink");
 		

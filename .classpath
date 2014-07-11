@@ -7,5 +7,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/appengine-java-sdk-1.9.4"/>
 	<classpathentry kind="lib" path="/home/nani/downloads/gwt-maps-1.1.1/gwt-maps.jar"/>
+	<classpathentry kind="lib" path="/home/nani/downloads/gwt-oauth2-0.2-alpha.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
