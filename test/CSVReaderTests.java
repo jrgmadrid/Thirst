@@ -16,7 +16,7 @@ public class CSVReaderTests {
 	@Before
 	public void setUp() throws Exception {
 		CSVReaderServiceImpl csvReader = new CSVReaderServiceImpl();
-		csvReader.updateDataWithoutChecking();
+		csvReader.updateData();
 		wfs = CSVReaderServiceImpl.getFountains();
 	}
 

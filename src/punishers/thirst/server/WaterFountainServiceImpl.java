@@ -379,25 +379,6 @@ public class WaterFountainServiceImpl extends RemoteServiceServlet implements
 	// }
 	// return (Long[]) results.toArray(new Long[results.size()]);
 	// }
-	//
-	// @Override
-	// public int getDatastoreSize() throws NotLoggedInException {
-	// checkLoggedIn();
-	// PersistenceManager pm = getPersistenceManager();
-	// int size = 0;
-	// try {
-	// Query q = pm.newQuery(WaterFountain.class);
-	// q.declareImports("import punishers.thirst.server.WaterFountain");
-	// List<WaterFountain> wfs = (List<WaterFountain>) q.execute();
-	// if (wfs == null)
-	// size = 0;
-	// if (wfs != null) {
-	// size = wfs.size();
-	// }
-	// } finally {
-	// pm.close();
-	// }
-	// return size;
-	// }
+	
 
 }

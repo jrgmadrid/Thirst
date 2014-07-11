@@ -116,8 +116,6 @@ public class Thirst implements EntryPoint {
 	 */
 	// TODO make page seen before sign in more appealing
 	public void onModuleLoad() {
-		// put upload photo field here in flex table to see if it works for the
-		// time being
 
 		LoginServiceAsync loginService = GWT.create(LoginService.class);
 		loginService.login(GWT.getHostPageBaseURL(),
