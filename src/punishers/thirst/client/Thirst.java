@@ -20,6 +20,7 @@ import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.dom.client.Style.Unit;
 
 import punishers.thirst.client.LoginInfo;
@@ -87,6 +88,9 @@ public class Thirst implements EntryPoint {
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
 	private Button fbButton = new Button("Do A Facebook Thing");
+	private Button twitterButton = new Button("Do A Twitter Thing");
+	
+	private Marker[] markers = new Marker[233];
 	/**
 	 * This is the entry point method.
 	 */
@@ -163,6 +167,11 @@ public class Thirst implements EntryPoint {
 		fbButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				checkIn();
+			}
+		});
+		twitterButton.addClickHandler(new ClickHandler() {
+			public void onClick(ClickEvent event) {
+				tweetThis();
 			}
 		});
 		ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
@@ -246,15 +255,19 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
-	private void loadFavoriteWaterFountains() {
+	private ArrayList<Long> loadFavoriteWaterFountains() {
+		final ArrayList<Long> faves = new ArrayList<Long>();
 		waterFountainService.getFavWaterFountains(new AsyncCallback<Long[]>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Long[] symbols) {
 				displayFountains(symbols, favoritesFlexTable);
+				for(int i = 0; i < symbols.length; i++)
+					faves.add(symbols[i]);
 			}
 		});
+		return faves;
 	}
 
 	private void loadWaterFountains() {
@@ -401,7 +414,15 @@ public class Thirst implements EntryPoint {
 			ratingTextBox.selectAll();
 			return;
 		}
-		addRatingToWaterFountain(idNum, rating);
+		if (isFavorite(idNum))
+			addRatingToWaterFountain(idNum,rating);
+		else
+			Window.alert("Please Favorite.");
+	}
+	
+	private boolean isFavorite(long idNum) {
+		ArrayList<Long> faves = loadFavoriteWaterFountains();
+		return faves.contains(idNum);
 	}
 
 	private void addRatingToWaterFountain(final long idNum, final int rating) {
@@ -441,8 +462,8 @@ public class Thirst implements EntryPoint {
 		final ArrayList<Double> ids = new ArrayList<Double>();
 		waterFountainService.getAllLatAndLngAndId(new AsyncCallback<Double[]>() {
 			public void onFailure(Throwable caught) {
-				Window.alert("getAllLatsAndLongs is failing");
-				handleError(caught);
+				/*Window.alert("getAllLatsAndLongs is failing");
+				handleError(caught);*/
 			}
 			public void onSuccess(Double[] result) {
 				for(int i = 0; i < result.length; i+=3){
@@ -461,7 +482,7 @@ public class Thirst implements EntryPoint {
 	// TODO refactor this method
 	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
 		
-		Marker[] markers = new Marker[latlngs.size()];
+		
 		final InfoWindowContent[] infoWindows = new InfoWindowContent[latlngs.size()];
 		
 		LatLng center = LatLng.newInstance(49.26, -123.1);
@@ -471,17 +492,21 @@ public class Thirst implements EntryPoint {
 	    map.addControl(new LargeMapControl());
 	    
 	    for(int i = 0; i < latlngs.size(); i++) {
-	    	Marker temp = new Marker(latlngs.get(i));
+	    	MarkerOptions mo = MarkerOptions.newInstance();
+	    	mo.setTitle("ID: " + Double.toString(ids.get(i)));
+	    	Marker temp = new Marker(latlngs.get(i),mo);
+	    	//temp.getTitle()
 			markers[i] = temp;
 	    }
 	    
 	    // TODO: add Id, number of favorites, link to profile, fbook and twitter to infowindow
 	    for(int i = 0; i < ids.size(); i++) {
+
+			//ratingPanel = new VerticalPanel();
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
 			ratingPanel.add(fbButton);
-//			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
-//			ratingPanel.add(idString);
+			ratingPanel.add(twitterButton);
 	    	InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
 			infoWindows[i] = infContent;
 	    }
@@ -522,10 +547,10 @@ public class Thirst implements EntryPoint {
 	}
 
 	private void handleError(Throwable error) {
-		Window.alert("an async call is failing");
+		/*Window.alert("an async call is failing");
 		if (error instanceof NotLoggedInException) {
 			Window.Location.replace(loginInfo.getLogoutUrl());
-		}
+		}*/
 	}
 	
 	private void checkIn() {
@@ -539,6 +564,18 @@ public class Thirst implements EntryPoint {
 					public void onSuccess(JSONObject result) {} } );
 	}
 	
+	private void tweetThis() {
+		TwitterUtil.getInstance().doGraph(
+				"1.1/statuses/update.json?",
+				RequestBuilder.POST,
+				"status="
+						+URL.encodeQueryString("Thanks Benson."),
+				new Callback<JSONObject, Throwable>() {
+					public void onFailure(Throwable reason) { }
+					public void onSuccess(JSONObject result) {} } );
+	}
 }
+			
+	
 	
 	

@@ -21,8 +21,12 @@ public class FacebookUtil {
     private static FacebookUtil instance = new FacebookUtil();
  
     private static final String FACEBOOK_AUTH_URL = "https://www.facebook.com/dialog/oauth";
- 
     private static final String FACEBOOK_CLIENT_ID = "299017110280261"; 
+    
+    private static final String TWITTER_AUTH_URL = "https://api.twitter.com/oauth/authorize";
+    private static final String TWITTER_API_KEY = "nxTyHRZXZrrX5EOSYHBphMr0W";
+    private static final String TWITTER_API_SECRET = "nm6b1Q1Pt5tDwBFtObirM6XYcLwNHd2MzmeyQRWhGx6jWe08KC";
+
  
     private FacebookUtil() {
     }
@@ -37,13 +41,21 @@ public class FacebookUtil {
  
     private void doAuth(@SuppressWarnings("deprecation") Callback<String, Throwable> callback) {
 	final AuthRequest req = new AuthRequest(FACEBOOK_AUTH_URL,
-		FACEBOOK_CLIENT_ID).withScopes("email", "publish_stream", "public_profile")
+		FACEBOOK_CLIENT_ID).withScopes("email", "publish_actions")
 	// Facebook expects a comma-delimited list of scopes
 		.withScopeDelimiter(",");
 	Auth.get().clearAllTokens();
 	Auth.get().login(req, callback);
     }
  
+    
+    private void doTwitterAuth(@SuppressWarnings("deprecation") Callback<String, Throwable> callback) {
+    	final AuthRequest req = new AuthRequest(TWITTER_AUTH_URL,
+    		TWITTER_API_KEY).withScopes("https://api.twitter.com/1.1/statuses/update.json");
+    	Auth.get().clearAllTokens();
+    	Auth.get().login(req, callback);
+    }
+    
     public void doGraph(final String id,
 	    final Callback<JSONObject, Throwable> callback) {
 	doGraph(id, RequestBuilder.GET, null, callback);
