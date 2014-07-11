@@ -1,2 +1,4 @@
 # Module thirst
 # RPC service class, partial path of RPC policy file
+punishers.thirst.client.WaterFountainService, 759E409C4435F94E9305631BAB64D983.gwt.rpc
+punishers.thirst.client.CSVReaderService, D12B057EE9B217A8C1E63B98736FDD9F.gwt.rpc
