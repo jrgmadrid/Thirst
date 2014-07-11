@@ -124,8 +124,9 @@ public class Thirst implements EntryPoint {
 	private Button fbButton = new Button("Do A Facebook Thing");
 	private Button twitterButton = new Button("Do A Twitter Thing");
 	
-	//Hyperlinks
-	private Hyperlink index = new Hyperlink("<a>Back to index</a>","");
+	//Profile
+	private Hyperlink index = new Hyperlink("Back to index","");
+	private FlexTable profileFlexTable = new FlexTable();
 	
 	private Marker[] markers = new Marker[233];
 	private Long[] idList = new Long[233];
@@ -639,25 +640,27 @@ public class Thirst implements EntryPoint {
 
 	private void waterFountainProfilesHide(){
 		//Remove the class which does the hiding
-		welcomeLabel.removeStyleName("profileHide");
-		waterFountainFlexTable.removeStyleName("profileHide");
-		newIdTextBox.removeStyleName("profileHide");
-		addPanel.removeStyleName("profileHide");
-		addWaterFountainButton.removeStyleName("profileHide");
-		updateDatabaseButton.removeStyleName("profileHide");
+		waterFountainScrollPanel.remove(profileFlexTable);
+		waterFountainScrollPanel.add(waterFountainFlexTable);
+		mainPanel.remove(index);
+		mapAndFlexTablePanel.setTabText(1, "All");
 	}
 	
 	private void waterFountainProfilesShow(Long id) {
-		//Hide everything on the page
-		waterFountainFlexTable.addStyleName("profileHide");
-		newIdTextBox.addStyleName("profileHide");
-		addPanel.addStyleName("profileHide");
-		addWaterFountainButton.addStyleName("profileHide");
-		updateDatabaseButton.addStyleName("profileHide");
+		index.addStyleName("profileIndexLink"); //Set offset class
+		waterFountainScrollPanel.remove(waterFountainFlexTable); //Hide the first flextable
+		profileFlexTable.setCellPadding(10);
+		waterFountainScrollPanel.add(profileFlexTable); // Add new table
+		profileFlexTable.removeAllRows(); //Clear the table to show only one entry at a time
+		displayFountain(id,profileFlexTable); //Display the given fountain
 		
 		//Add back hyperlink
-		//mainPanel.add(index);
-		waterFountainScrollPanel.add(index);
+		mainPanel.add(index);
+		
+		mapAndFlexTablePanel.setTabText(1, "Profile: " + String.valueOf(id));
+		
+		//index.addStyleName("profileActiveLink");
+		
 		//Placeholders
 		/*
 		 * string PictureUrl = getImage(id);
