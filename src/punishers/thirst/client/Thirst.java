@@ -212,6 +212,7 @@ public class Thirst implements EntryPoint {
 		addPanel.add(addWaterFountainButton);
 		addPanel.addStyleName("addPanel");
 		newIdTextBox.setFocus(true);
+
 	}
 	
 	private void createWaterFountainTab() {
@@ -605,6 +606,9 @@ public class Thirst implements EntryPoint {
 		//Add back hyperlink
 		mainPanel.add(index);
 		
+		profileFlexTable.add(uploadWidget);
+		profileFlexTable.add(galleryWidget);
+		
 		mapAndFlexTablePanel.setTabText(1, "Profile: " + String.valueOf(id));
 		
 		//index.addStyleName("profileActiveLink");
@@ -615,14 +619,11 @@ public class Thirst implements EntryPoint {
 		 * displayImage(pictureUrl);
 		 */
 		galleryWidget = new PhotoGallery(this);
-		RootPanel.get("gallery").add(galleryWidget);
 		
 		uploadWidget = new UploadPhoto(id, loginInfo);
 
-		uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+		uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);		
 
-		RootPanel.get("photoSharing").add(uploadWidget);
-		
 	}
 	
 	private void checkIn(Marker m) {

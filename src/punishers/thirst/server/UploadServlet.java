@@ -38,7 +38,7 @@ public class UploadServlet extends HttpServlet {
 	        BlobKey blobKey = (BlobKey) blobs.get("image");
 	 
 	        if (blobKey == null) {
-	            // Uh ... something went really wrong here
+	        	
 	        } else {
 	 
 	            ImagesService imagesService = ImagesServiceFactory
