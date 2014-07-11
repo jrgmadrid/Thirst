@@ -3,6 +3,9 @@ package punishers.thirst.client;
 import java.util.ArrayList;
 
 import com.google.api.gwt.oauth2.client.Callback;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -35,7 +38,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -102,6 +107,14 @@ public class Thirst implements EntryPoint {
 	
 	private Marker[] markers = new Marker[233];
 	private Long[] idList = new Long[233];
+	
+	// uploading photos
+	private FormPanel uploadForm = new FormPanel();
+	private Button uploadButton = new Button("Upload Photo");
+	private FileUpload uploadField;
+	private PhotoGallery galleryWidget;
+	private UploadPhoto uploadWidget;
+	
 	
 	/**
 	 * This is the entry point method.
@@ -601,6 +614,15 @@ public class Thirst implements EntryPoint {
 		 * string PictureUrl = getImage(id);
 		 * displayImage(pictureUrl);
 		 */
+		galleryWidget = new PhotoGallery(this);
+		RootPanel.get("gallery").add(galleryWidget);
+		
+		uploadWidget = new UploadPhoto(id, loginInfo);
+
+		uploadWidget.addGalleryUpdatedEventHandler(galleryWidget);
+
+		RootPanel.get("photoSharing").add(uploadWidget);
+		
 	}
 	
 	private void checkIn(Marker m) {
@@ -633,4 +655,9 @@ public class Thirst implements EntryPoint {
 			Window.Location.replace(loginInfo.getLogoutUrl());
 		}
 	}
+	
+	public LoginInfo getLoginInfo() {
+		return loginInfo;
+	}
+	
 }
