@@ -36,6 +36,8 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
@@ -45,7 +47,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
 import com.google.gwt.json.client.JSONObject;
 
 /**
@@ -128,6 +129,8 @@ public class Thirst implements EntryPoint {
 	private void loadLogin() {
 
 		signInLink.setHref(loginInfo.getLoginUrl());
+		loginPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		loginPanel.addStyleName("center");
 		loginPanel.add(loginLabel);
 		loginPanel.add(signInLink);
 
