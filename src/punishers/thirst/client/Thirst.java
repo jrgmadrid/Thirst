@@ -87,8 +87,9 @@ public class Thirst implements EntryPoint {
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
 	
-	//Hyperlinks
-	private Hyperlink index = new Hyperlink("<a>Back to index</a>","");
+	//Profile
+	private Hyperlink index = new Hyperlink("Back to index","");
+	private FlexTable profileFlexTable = new FlexTable();
 	
 	/**
 	 * This is the entry point method.
@@ -538,25 +539,24 @@ public class Thirst implements EntryPoint {
 
 	private void waterFountainProfilesHide(){
 		//Remove the class which does the hiding
-		welcomeLabel.removeStyleName("profileHide");
-		waterFountainFlexTable.removeStyleName("profileHide");
-		newIdTextBox.removeStyleName("profileHide");
-		addPanel.removeStyleName("profileHide");
-		addWaterFountainButton.removeStyleName("profileHide");
-		updateDatabaseButton.removeStyleName("profileHide");
+		waterFountainScrollPanel.remove(profileFlexTable);
+		waterFountainScrollPanel.add(waterFountainFlexTable);
+		mainPanel.remove(index);
 	}
 	
 	private void waterFountainProfilesShow(Long id) {
-		//Hide everything on the page
-		waterFountainFlexTable.addStyleName("profileHide");
-		newIdTextBox.addStyleName("profileHide");
-		addPanel.addStyleName("profileHide");
-		addWaterFountainButton.addStyleName("profileHide");
-		updateDatabaseButton.addStyleName("profileHide");
+		index.addStyleName("profileIndexLink"); //Set offset class
+		waterFountainScrollPanel.remove(waterFountainFlexTable); //Hide the first flextable
+		profileFlexTable.setCellPadding(10);
+		waterFountainScrollPanel.add(profileFlexTable); // Add new table
+		profileFlexTable.removeAllRows(); //Clear the table to show only one entry at a time
+		displayFountain(id,profileFlexTable); //Display the given fountain
 		
 		//Add back hyperlink
-		//mainPanel.add(index);
-		waterFountainScrollPanel.add(index);
+		mainPanel.add(index);
+		
+		//index.addStyleName("profileActiveLink");
+		
 		//Placeholders
 		/*
 		 * string PictureUrl = getImage(id);
