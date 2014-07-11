@@ -2,6 +2,7 @@ package punishers.thirst.client;
 
 import java.util.ArrayList;
 
+import com.google.api.gwt.oauth2.client.Callback;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -11,6 +12,8 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.maps.client.InfoWindowContent;
 import com.google.gwt.maps.client.MapWidget;
 import com.google.gwt.maps.client.Maps;
@@ -18,6 +21,7 @@ import com.google.gwt.maps.client.control.LargeMapControl;
 import com.google.gwt.maps.client.event.MarkerClickHandler;
 import com.google.gwt.maps.client.geom.LatLng;
 import com.google.gwt.maps.client.overlay.Marker;
+import com.google.gwt.maps.client.overlay.MarkerOptions;
 import com.google.gwt.dom.client.Style.Unit;
 
 import punishers.thirst.client.LoginInfo;
@@ -41,6 +45,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import com.google.gwt.json.client.JSONObject;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -86,10 +92,15 @@ public class Thirst implements EntryPoint {
 	private VerticalPanel ratingPanel = new VerticalPanel();
 	private TextBox ratingTextBox = new TextBox();
 	private Button addRatingButton = new Button("Rate");
+	private Button fbButton = new Button("Do A Facebook Thing");
+	private Button twitterButton = new Button("Do A Twitter Thing");
 	
 	//Profile
 	private Hyperlink index = new Hyperlink("Back to index","");
 	private FlexTable profileFlexTable = new FlexTable();
+	
+	private Marker[] markers = new Marker[233];
+	private Long[] idList = new Long[233];
 	
 	/**
 	 * This is the entry point method.
@@ -159,18 +170,6 @@ public class Thirst implements EntryPoint {
 
 		RootLayoutPanel.get().add(mainPanel);
 
-		addRatingButton.addClickHandler(new ClickHandler() {
-			public void onClick(ClickEvent event) {
-				addRating();
-			}
-		});
-		ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
-			public void onKeyDown(KeyDownEvent event) {
-				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-					addRating();
-				}
-			}
-		});
 		addWaterFountainButton.addClickHandler(new ClickHandler() {
 			public void onClick(ClickEvent event) {
 				addWaterFountain();
@@ -190,7 +189,6 @@ public class Thirst implements EntryPoint {
 		welcomePanel.add(welcomeLabel);
 	}
 	
-	// TODO DOROTHY: feel free to put the upload photo shit into the add panel for now
 	private void createAddPanel() {
 		Label addLabel = new Label("to add a water fountain to your favorites list enter the ID number into the text box.");
 		addPanel.add(addLabel);
@@ -246,15 +244,19 @@ public class Thirst implements EntryPoint {
 		});
 	}
 	
-	private void loadFavoriteWaterFountains() {
+	private ArrayList<Long> loadFavoriteWaterFountains() {
+		final ArrayList<Long> faves = new ArrayList<Long>();
 		waterFountainService.getFavWaterFountains(new AsyncCallback<Long[]>() {
 			public void onFailure(Throwable error) {
 				handleError(error);
 			}
 			public void onSuccess(Long[] symbols) {
 				displayFountains(symbols, favoritesFlexTable);
+				for(int i = 0; i < symbols.length; i++)
+					faves.add(symbols[i]);
 			}
 		});
+		return faves;
 	}
 
 	private void loadWaterFountains() {
@@ -279,7 +281,8 @@ public class Thirst implements EntryPoint {
 		if(flexTable.toString() == favoritesFlexTable.toString()){
 			displayFavorite(symbol);
 		}
-		//flexTable.setText(row, 0, String.valueOf(symbol));
+		// maybe comment this thing out
+		flexTable.setText(row, 0, String.valueOf(symbol));
 		Hyperlink fountain = new Hyperlink(String.valueOf(symbol), String.valueOf(symbol));
 		flexTable.setWidget(row, 0,fountain);
 		displayRating(symbol, row, flexTable);
@@ -364,7 +367,7 @@ public class Thirst implements EntryPoint {
 				removeWaterFountain(symbol);
 			}
 		});
-		favoritesFlexTable.setWidget(row, 3, removeWaterFountainButton);
+		favoritesFlexTable.setWidget(row, 6, removeWaterFountainButton);
 	}
 
 	private void removeWaterFountain(final Long symbol) {
@@ -406,19 +409,25 @@ public class Thirst implements EntryPoint {
 		});
 	}
 
-	private void addRating() {
+	private void addRating(String s) {
 		final int rating = Integer.valueOf(ratingTextBox.getText().trim());
-		ratingTextBox.setFocus(true);
-		
-		final long idNum = Long.valueOf(newIdTextBox.getText().trim());
-		newIdTextBox.setFocus(true);
 
+		
+		final long idNum = Long.valueOf(s);
+		
 		if(rating < 0 || rating > 7) {
 			Window.alert("Please enter a number between 0 and 7");
-			ratingTextBox.selectAll();
+			ratingTextBox.setText("");
 			return;
 		}
-		addRatingToWaterFountain(idNum, rating);
+		if (isFavorite(idNum))
+			addRatingToWaterFountain(idNum,rating);
+		else
+			Window.alert("Please Favorite.");
+	}
+	
+	private boolean isFavorite(long idNum) {
+		return waterFountains.contains(idNum);
 	}
 
 	private void addRatingToWaterFountain(final long idNum, final int rating) {
@@ -478,7 +487,7 @@ public class Thirst implements EntryPoint {
 	// TODO refactor this method
 	protected void displayMap(ArrayList<LatLng> latlngs, ArrayList<Double> ids) {
 		
-		Marker[] markers = new Marker[latlngs.size()];
+		
 		final InfoWindowContent[] infoWindows = new InfoWindowContent[latlngs.size()];
 		
 		LatLng center = LatLng.newInstance(49.26, -123.1);
@@ -488,16 +497,18 @@ public class Thirst implements EntryPoint {
 	    map.addControl(new LargeMapControl());
 	    
 	    for(int i = 0; i < latlngs.size(); i++) {
-	    	Marker temp = new Marker(latlngs.get(i));
+	    	MarkerOptions mo = MarkerOptions.newInstance();
+	    	mo.setTitle(String.valueOf(ids.get(i)));
+	    	Marker temp = new Marker(latlngs.get(i),mo);
 			markers[i] = temp;
 	    }
-	    
-	    // TODO: JACOB add Id, link to profile, fbook and twitter to infowindow 
+
 	    for(int i = 0; i < ids.size(); i++) {
 			ratingPanel.add(addRatingButton);
 			ratingPanel.add(ratingTextBox);
-			Label idString = new Label("WaterFountain Id: " + String.valueOf(ids.get(i)));
-			ratingPanel.add(idString);
+			ratingPanel.add(fbButton);
+			ratingPanel.add(twitterButton);
+
 	    	InfoWindowContent infContent = new InfoWindowContent(ratingPanel);
 			infoWindows[i] = infContent;
 	    }
@@ -508,6 +519,28 @@ public class Thirst implements EntryPoint {
 	    	temp.addMarkerClickHandler(new MarkerClickHandler() {
 	    		public void onClick(MarkerClickEvent event) {
 	    			map.getInfoWindow().open(temp, infoWindows[position]);
+	    			addRatingButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					addRating(temp.getTitle());
+	    				}
+	    			});
+	    			fbButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					checkIn(temp);
+	    				}
+	    			});
+	    			twitterButton.addClickHandler(new ClickHandler() {
+	    				public void onClick(ClickEvent event) {
+	    					tweetThis();
+	    				}
+	    			});
+	    			ratingTextBox.addKeyDownHandler(new KeyDownHandler() {
+	    				public void onKeyDown(KeyDownEvent event) {
+	    					if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+	    						addRating(temp.getTitle());
+	    					}
+	    				}
+	    			});
 	    		}
 	    	});
 			map.addOverlay(temp);
@@ -562,7 +595,28 @@ public class Thirst implements EntryPoint {
 		 * string PictureUrl = getImage(id);
 		 * displayImage(pictureUrl);
 		 */
-		
+	}
+	
+	private void checkIn(Marker m) {
+		FacebookUtil.getInstance().doGraph(
+				"/me/feed",
+				RequestBuilder.POST,
+				"message="
+					+URL.encodeQueryString(m.getTitle()),
+				new Callback<JSONObject, Throwable>() {
+					public void onFailure(Throwable reason) { }
+					public void onSuccess(JSONObject result) {} } );
+	}
+	
+	private void tweetThis() {
+		TwitterUtil.getInstance().doGraph(
+				"1.1/statuses/update.json?",
+				RequestBuilder.POST,
+				"status="
+						+URL.encodeQueryString("Thanks Benson."),
+				new Callback<JSONObject, Throwable>() {
+					public void onFailure(Throwable reason) { }
+					public void onSuccess(JSONObject result) {} } );
 	}
 	
 	
